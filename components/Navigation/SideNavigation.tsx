@@ -14,6 +14,8 @@ import { NAV_LIST } from './const';
 export default function SideNavigation({ rootPath = '', navList }: Props) {
   const pathname = usePathname();
 
+  if (!navList?.length) return null;
+
   return (
     <NavigationMenu orientation="vertical">
       <NavigationMenuList className="flex flex-col items-start gap-2">
