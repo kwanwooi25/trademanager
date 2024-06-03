@@ -4,16 +4,11 @@ import GlobalHeader from '@/components/GlobalHeader';
 import SideNavigation from '@/components/Navigation/SideNavigation';
 import { NAV_LIST } from '@/components/Navigation/const';
 import { GNB_HEIGHT, LNB_WIDTH } from '@/const/layout';
-import { AUTH_ROUTES } from '@/const/paths';
 import { usePathname } from 'next/navigation';
 import { PropsWithChildren } from 'react';
 
 export default function MainLayout({ children }: PropsWithChildren) {
   const pathname = usePathname();
-  const isAuthRoute = AUTH_ROUTES.includes(pathname);
-
-  if (isAuthRoute) return children;
-
   const currentNav = NAV_LIST.find(({ href }) => pathname?.includes(href));
   const { href, submenus } = currentNav || {};
 

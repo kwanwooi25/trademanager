@@ -1,4 +1,5 @@
 import AuthRequired from '@/components/AuthRequired';
+import CompanyRequired from '@/components/CompanyRequired';
 import { auth } from '../auth';
 
 export function withAuth(Component: () => JSX.Element | Promise<JSX.Element>) {
@@ -7,6 +8,8 @@ export function withAuth(Component: () => JSX.Element | Promise<JSX.Element>) {
 
     if (!session?.user) {
       return <AuthRequired />;
+    } else if (!session?.user?.companyId) {
+      return <CompanyRequired />;
     }
 
     return <Component />;

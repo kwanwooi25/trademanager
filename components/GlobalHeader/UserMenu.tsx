@@ -1,10 +1,17 @@
 'use client';
 
 import { PATHS } from '@/const/paths';
-import { LucideLogIn, LucideMoon, LucideSettings, LucideSun, LucideUser } from 'lucide-react';
+import {
+  LucideLogIn,
+  LucideLogOut,
+  LucideMoon,
+  LucideSettings,
+  LucideSun,
+  LucideUser,
+} from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
-import { Avatar, AvatarFallback } from '../ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
 import {
   DropdownMenu,
@@ -17,28 +24,26 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
+import { useSession } from 'next-auth/react';
 
 export default function UserMenu({ className }: Props) {
   const { theme, setTheme } = useTheme();
   const router = useRouter();
-  // const session = useSession();
-  // const isAuthenticated = session.status === 'authenticated';
+  const session = useSession();
+  const isAuthenticated = session.status === 'authenticated';
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon">
           <Avatar>
-            {/* <AvatarImage src={session.data?.user.image ?? ''} />
+            <AvatarImage src={session.data?.user?.image ?? ''} />
             <AvatarFallback>
-              {!!session.data?.user.name ? (
+              {!!session.data?.user?.name ? (
                 session.data?.user.name.charAt(0).toUpperCase()
               ) : (
                 <LucideUser />
               )}
-            </AvatarFallback> */}
-            <AvatarFallback>
-              <LucideUser />
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -70,17 +75,17 @@ export default function UserMenu({ className }: Props) {
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
-          {/* {isAuthenticated ? (
+          {isAuthenticated ? (
             <DropdownMenuItem onClick={() => router.push(PATHS.SIGN_OUT)}>
               <LucideLogOut className="mr-2 h-4 w-4" />
               <span>Logout</span>
             </DropdownMenuItem>
-          ) : ( */}
-          <DropdownMenuItem onClick={() => router.push(PATHS.SIGN_IN)}>
-            <LucideLogIn className="mr-2 h-4 w-4" />
-            <span>Login</span>
-          </DropdownMenuItem>
-          {/* )} */}
+          ) : (
+            <DropdownMenuItem onClick={() => router.push(PATHS.SIGN_IN)}>
+              <LucideLogIn className="mr-2 h-4 w-4" />
+              <span>Login</span>
+            </DropdownMenuItem>
+          )}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

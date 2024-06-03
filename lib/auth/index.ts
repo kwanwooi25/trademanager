@@ -5,24 +5,17 @@ import authConfig from './config';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
-  secret: process.env.AUTH_SECRET,
   session: { strategy: 'jwt' },
-  pages: {
-    signIn: '/sign-in',
-  },
-
   callbacks: {
-    async session({ session, user, token }) {
-      if (user !== null) {
-        session.user = user;
-      }
+    async session({ session, token }) {
+      if (!token.sub) return Promise.resolve(session);
 
+      const user = await prisma.user.findUnique({ where: { id: token.sub } });
+      if (!user) return Promise.resolve(session);
+
+      session.user = user;
       return Promise.resolve(session);
     },
-    async jwt({ token }) {
-      return Promise.resolve(token);
-    },
   },
-
   ...authConfig,
 });
