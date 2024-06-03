@@ -70,11 +70,10 @@ model Company {
   crn            String   @unique
   name           String
   phone          String?
-  mobile         String?
-  registeredAt   DateTime
+  registeredAt   DateTime?
   repName        String
   repMobile      String
-  certificateUrl String
+  certificateUrl String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
