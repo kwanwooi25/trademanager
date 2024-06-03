@@ -1,6 +1,6 @@
 'use client';
 
-import { PATHS } from '@/const/paths';
+import { API_ROUTE } from '@/const/paths';
 import {
   LucideLogIn,
   LucideLogOut,
@@ -76,12 +76,12 @@ export default function UserMenu({ className }: Props) {
             </DropdownMenuPortal>
           </DropdownMenuSub>
           {isAuthenticated ? (
-            <DropdownMenuItem onClick={() => router.push(PATHS.SIGN_OUT)}>
+            <DropdownMenuItem onClick={() => router.push(API_ROUTE.SIGN_OUT)}>
               <LucideLogOut className="mr-2 h-4 w-4" />
               <span>Logout</span>
             </DropdownMenuItem>
           ) : (
-            <DropdownMenuItem onClick={() => router.push(PATHS.SIGN_IN)}>
+            <DropdownMenuItem onClick={() => router.push(API_ROUTE.SIGN_IN)}>
               <LucideLogIn className="mr-2 h-4 w-4" />
               <span>Login</span>
             </DropdownMenuItem>
