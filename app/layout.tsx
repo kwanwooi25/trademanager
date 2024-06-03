@@ -1,3 +1,4 @@
+import MainLayout from '@/components/layouts/MainLayout';
 import { Toaster } from '@/components/ui/toaster';
 import { auth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
@@ -6,7 +7,6 @@ import { Noto_Sans_KR } from 'next/font/google';
 import NextTopLoader from 'nextjs-toploader';
 import './globals.css';
 import Providers from './providers';
-import MainLayout from '@/components/layouts/MainLayout';
 
 const notoSans = Noto_Sans_KR({ subsets: ['latin'] });
 
@@ -26,11 +26,8 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-    <html lang="en">
-      <body
-        className={cn(notoSans.className, 'min-h-screen flex flex-col antialiased')}
-        suppressHydrationWarning
-      >
+    <html lang="en" suppressHydrationWarning>
+      <body className={cn(notoSans.className, 'min-h-screen flex flex-col antialiased')}>
         <Providers session={session}>
           <NextTopLoader color="gray" zIndex={99999} />
           <MainLayout>{children}</MainLayout>

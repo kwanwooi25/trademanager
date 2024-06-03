@@ -10,7 +10,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, token }) {
       if (!token.sub) return Promise.resolve(session);
 
-      const user = await prisma.user.findUnique({ where: { id: token.sub } });
+      const user = await prisma.user.findUnique({
+        where: { id: token.sub },
+        include: { company: true },
+      });
       if (!user) return Promise.resolve(session);
 
       session.user = user;

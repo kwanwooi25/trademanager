@@ -12,7 +12,15 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
+import { API_ROUTE } from '@/const/paths';
+import { useAxiosError } from '@/hooks/useAxiosError';
+import { SuccessResponse } from '@/types/api';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Company } from '@prisma/client';
+import axios from 'axios';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -25,12 +33,33 @@ const formSchema = z.object({
 });
 
 export default function RegisterCompanyPage() {
+  const { toast } = useToast();
+  const { handleAxiosError } = useAxiosError();
+  const router = useRouter();
+  const session = useSession();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    try {
+      const { data } = await axios.post<SuccessResponse<Company>>(
+        API_ROUTE.REGISTER_COMPANY,
+        values,
+      );
+      toast({
+        description: (
+          <p>
+            회사 등록 성공 (<b>{data.data.name}</b>)
+          </p>
+        ),
+        variant: 'success',
+      });
+      await session.update();
+      router.refresh();
+    } catch (error) {
+      handleAxiosError(error);
+    }
   };
 
   return (

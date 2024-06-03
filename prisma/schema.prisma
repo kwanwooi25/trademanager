@@ -27,7 +27,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   companyId String?
-  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company   Company? @relation(fields: [companyId], references: [id])
 
   accounts Account[]
   sessions Session[]
