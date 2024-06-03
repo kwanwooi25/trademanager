@@ -66,8 +66,8 @@ model Session {
 }
 
 model Company {
-  id             String   @id @default(cuid())
-  crn            String   @unique
+  id             String    @id @default(cuid())
+  crn            String    @unique
   name           String
   phone          String?
   registeredAt   DateTime?
@@ -78,5 +78,55 @@ model Company {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  users User[]
+  users    User[]
+  products Product[]
+}
+
+model Product {
+  id   String @id @default(cuid())
+  name String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  options ProductOption[]
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+model ProductOption {
+  id                String              @id @default(cuid())
+  name              String
+  imageUrl          String?
+  unitPrice         Float               @default(0)
+  currency          Currency            @default(CNY)
+  importedFrom      Country             @default(CN)
+  inventoryQuantity Int                 @default(0)
+  leadtime          Int                 @default(21)
+  status            ProductOptionStatus @default(ON_SALE)
+  location          String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+enum ProductOptionStatus {
+  ON_SALE
+  SUSPENDED
+}
+
+enum Currency {
+  KRW
+  CNY
+  JPY
+}
+
+enum Country {
+  KR
+  CN
+  JP
 }
