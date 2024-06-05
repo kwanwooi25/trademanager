@@ -14,7 +14,7 @@ import { LucideEdit2, LucideExternalLink, LucideMoreVertical, LucideTrash2 } fro
 import Link from 'next/link';
 import { Fragment } from 'react';
 
-export default function ProductListItem({ product }: Props) {
+export default function ProductListItem({ product, onOptionDelete }: Props) {
   const { purchasedAt, options } = product;
   const hasPurchaseUrl = isValidUrl(purchasedAt);
 
@@ -23,10 +23,7 @@ export default function ProductListItem({ product }: Props) {
     console.log('edit');
   };
 
-  const handleClickDelete = () => {
-    // TODO
-    console.log('delete');
-  };
+  const handleClickDelete = (optionId: string) => () => onOptionDelete(optionId);
 
   return (
     <li className="px-4 py-2 grid items-center gap-4 grid-cols-[2fr_auto_2fr_1fr_1fr_1fr_1fr_60px] border-b p-2">
@@ -73,7 +70,7 @@ export default function ProductListItem({ product }: Props) {
                   <LucideEdit2 className="mr-2 h-4 w-4" />
                   <span>수정</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive" onClick={handleClickDelete}>
+                <DropdownMenuItem className="text-destructive" onClick={handleClickDelete(id)}>
                   <LucideTrash2 className="mr-2 h-4 w-4" />
                   <span>삭제</span>
                 </DropdownMenuItem>
@@ -99,4 +96,5 @@ export default function ProductListItem({ product }: Props) {
 
 type Props = {
   product: ProductWithOptions;
+  onOptionDelete: (optionId: string) => void;
 };

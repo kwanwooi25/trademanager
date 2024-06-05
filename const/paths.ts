@@ -10,4 +10,5 @@ export const API_ROUTE = {
   SIGN_OUT: '/api/auth/signout',
   REGISTER_COMPANY: '/api/company',
   ADD_PRODUCT: '/api/product',
+  DELETE_PRODUCT_OPTION: '/api/product/option',
 } as const;
