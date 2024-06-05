@@ -2,11 +2,27 @@ import { FailedResponse, SuccessResponse } from '@/types/api';
 import { Prisma } from '@prisma/client';
 import { HttpStatusCode } from 'axios';
 import { NextResponse } from 'next/server';
+import { auth } from '@/lib/auth';
+
+export async function getUserFromSession() {
+  const session = await auth();
+  const user = session?.user;
+  
+  if (!user) {
+    handleFail({ status: HttpStatusCode.Unauthorized });
+    return;
+  }
+  
+  return user;
+}
 
 export function handleFail(props?: { status?: number; message?: string }) {
-  const { status = HttpStatusCode.InternalServerError, message = 'Internal Server Error' } =
-    props ?? {};
-
+  const {
+    status = HttpStatusCode.InternalServerError,
+    message = 'Internal Server Error'
+  } =
+  props ?? {};
+  
   return NextResponse.json<FailedResponse>(
     {
       result: 'FAILED',
@@ -35,8 +51,14 @@ export function handleSuccess<T>({
 
 export function handlePrismaClientError(e: unknown) {
   if (e instanceof Prisma.PrismaClientKnownRequestError) {
-    return handleFail({ status: HttpStatusCode.BadRequest, message: e.message });
+    return handleFail({
+      status: HttpStatusCode.BadRequest,
+      message: e.message
+    });
   }
-
-  return handleFail({ status: HttpStatusCode.BadRequest, message: (e as any).message });
+  
+  return handleFail({
+    status: HttpStatusCode.BadRequest,
+    message: (e as any).message
+  });
 }

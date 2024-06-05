@@ -20,8 +20,18 @@ import {
   formSchema,
   type ProductFormSchema
 } from '@/components/pages/AddProduct/formSchema';
+import axios from 'axios';
+import { SuccessResponse } from '@/types/api';
+import { Product } from '@prisma/client';
+import { API_ROUTE, PATHS } from '@/const/paths';
+import { useAxiosError } from '@/hooks/useAxiosError';
+import { useToast } from '@/components/ui/use-toast';
+import { useRouter } from 'next/navigation';
 
 export default function AddProductPage() {
+  const router = useRouter();
+  const { toast } = useToast();
+  const { handleAxiosError } = useAxiosError();
   const form = useForm<ProductFormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -34,7 +44,29 @@ export default function AddProductPage() {
   });
   
   const onSubmit = async (values: ProductFormSchema) => {
-    console.log(values);
+    try {
+      const { data } = await axios.post<SuccessResponse<Product>>(
+        API_ROUTE.ADD_PRODUCT,
+        values,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+      
+      toast({
+        description: (
+          <p>
+            상품 등록 성공 (<b>{data.data.name}</b>)
+          </p>
+        ),
+        variant: 'success',
+      });
+      router.replace(PATHS.PRODUCT_LIST);
+    } catch (error) {
+      handleAxiosError(error);
+    }
   };
   
   const { fields, append, remove, update } = useFieldArray({
