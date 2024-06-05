@@ -63,3 +63,9 @@ export const formatTime = (original?: string) => {
 
   return `${parsedNumber}`.replace(/^(\d{0,2})(\d{0,2})$/g, '$1:$2').replace(/(\:{1,2})$/g, '');
 };
+
+export const isValidUrl = (url?: string) => {
+  if (!url) return false;
+
+  return url.startsWith('http');
+};

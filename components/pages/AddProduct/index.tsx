@@ -2,6 +2,10 @@
 
 import PageBody from '@/components/PageBody';
 import PageHeader from '@/components/PageHeader';
+import ProductOptionForm from '@/components/pages/AddProduct/ProductOptionForm';
+import { DEFAULT_PRODUCT_OPTION } from '@/components/pages/AddProduct/const';
+import { formSchema, type ProductFormSchema } from '@/components/pages/AddProduct/formSchema';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -11,50 +15,42 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useFieldArray, useForm } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
-import { DEFAULT_PRODUCT_OPTION } from '@/components/pages/AddProduct/const';
-import ProductOptionForm from '@/components/pages/AddProduct/ProductOptionForm';
-import {
-  formSchema,
-  type ProductFormSchema
-} from '@/components/pages/AddProduct/formSchema';
-import axios from 'axios';
-import { SuccessResponse } from '@/types/api';
-import { Product } from '@prisma/client';
+import { useToast } from '@/components/ui/use-toast';
 import { API_ROUTE, PATHS } from '@/const/paths';
 import { useAxiosError } from '@/hooks/useAxiosError';
-import { useToast } from '@/components/ui/use-toast';
+import { SuccessResponse } from '@/types/api';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Product } from '@prisma/client';
+import axios from 'axios';
+import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
 
 export default function AddProductPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { handleAxiosError } = useAxiosError();
+  const [isLoading, setIsLoading] = useState(false);
   const form = useForm<ProductFormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
       purchasedAt: '',
-      options: [
-        { ...DEFAULT_PRODUCT_OPTION }
-      ],
+      options: [{ ...DEFAULT_PRODUCT_OPTION }],
     },
   });
-  
+
   const onSubmit = async (values: ProductFormSchema) => {
+    setIsLoading(true);
+
     try {
-      const { data } = await axios.post<SuccessResponse<Product>>(
-        API_ROUTE.ADD_PRODUCT,
-        values,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }
-      );
-      
+      const { data } = await axios.post<SuccessResponse<Product>>(API_ROUTE.ADD_PRODUCT, values, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
       toast({
         description: (
           <p>
@@ -66,36 +62,35 @@ export default function AddProductPage() {
       router.replace(PATHS.PRODUCT_LIST);
     } catch (error) {
       handleAxiosError(error);
+    } finally {
+      setIsLoading(false);
     }
   };
-  
+
   const { fields, append, remove, update } = useFieldArray({
     control: form.control,
-    name: 'options'
+    name: 'options',
   });
-  
+
   const addOption = () => append({ ...DEFAULT_PRODUCT_OPTION });
-  
+
   const handleRemove = (index: number) => {
     if (fields.length <= 1) {
       update(index, { ...DEFAULT_PRODUCT_OPTION });
       return;
     }
-    
+
     remove(index);
   };
-  
+
   return (
     <Form {...form}>
-      <form
-        className="max-w-3xl mx-auto px-2 py-4"
-        onSubmit={form.handleSubmit(onSubmit)}
-      >
-        <PageHeader
-          title="상품 등록"
-          backButton
-        >
-          <Button type="submit">상품 등록</Button>
+      <form className="max-w-3xl mx-auto px-2 py-4" onSubmit={form.handleSubmit(onSubmit)}>
+        <PageHeader title="상품 등록" backButton>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading && <Loader2 className={'mr-2 h-4 w-4 animate-spin'} />}
+            상품 등록
+          </Button>
         </PageHeader>
         <PageBody className="flex flex-col gap-4">
           <FormField
@@ -105,9 +100,9 @@ export default function AddProductPage() {
               <FormItem>
                 <FormLabel>상품명</FormLabel>
                 <FormControl>
-                  <Input {...field} autoFocus/>
+                  <Input {...field} autoFocus />
                 </FormControl>
-                <FormMessage/>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -118,9 +113,9 @@ export default function AddProductPage() {
               <FormItem>
                 <FormLabel>구매처</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="URL 또는 명칭"/>
+                  <Input {...field} placeholder="URL 또는 명칭" />
                 </FormControl>
-                <FormMessage/>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -130,12 +125,9 @@ export default function AddProductPage() {
                 <b>옵션 </b>
                 <span className={'text-sm'}>({fields.length.toLocaleString()}개)</span>
               </h5>
-              <Button
-                size={'sm'}
-                variant={'secondary'}
-                type={'button'}
-                onClick={addOption}
-              >옵션 추가</Button>
+              <Button size={'sm'} variant={'secondary'} type={'button'} onClick={addOption}>
+                옵션 추가
+              </Button>
             </div>
             {fields.map(({ id, ...option }, index) => (
               <ProductOptionForm

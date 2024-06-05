@@ -30,7 +30,8 @@ export async function getProducts({
       where,
       skip: (page - 1) * per,
       take: per,
-      orderBy: { name: 'asc' },
+      orderBy: { createdAt: 'asc' },
+      include: { options: true },
     }),
   ]);
   
