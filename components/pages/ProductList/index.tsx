@@ -10,8 +10,10 @@ import { useCreateQueryString } from '@/hooks/useCreateQueryString';
 import { getProducts } from '@/services/product';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import ProductListFilter from './ProductListFilter';
+import ProductListHeader from './ProductListHeader';
 
-export default function ProductListPage({ products, lastPage }: Props) {
+export default function ProductListPage({ products, lastPage, totalCount }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -20,6 +22,10 @@ export default function ProductListPage({ products, lastPage }: Props) {
 
   const handlePageChange = (page: number) => {
     router.push(`${pathname}?${createQueryString('page', `${page}`)}`);
+  };
+
+  const handleSearch = (input: string) => {
+    router.push(`${pathname}?${createQueryString('search', `${input}`)}`);
   };
 
   return (
@@ -42,17 +48,9 @@ export default function ProductListPage({ products, lastPage }: Props) {
           </div>
         ) : (
           <>
-            <ul className="flex flex-col border-t">
-              <li className="px-4 py-6 grid items-center gap-4 grid-cols-[2fr_auto_2fr_1fr_1fr_1fr_1fr_60px] text-sm font-semibold border-b">
-                <span>상품명</span>
-                <span className="w-[60px]"></span>
-                <span>옵션명</span>
-                <span className="text-right">단가</span>
-                <span className="text-right">재고수량</span>
-                <span className="text-right">입고소요일</span>
-                <span className="text-right">보관 위치</span>
-                <span className="w-[40px]"></span>
-              </li>
+            <ProductListFilter onSearch={handleSearch} totalCount={totalCount} />
+            <ul className="flex flex-col">
+              <ProductListHeader />
               {products.map((product) => (
                 <ProductListItem key={product.id} product={product} />
               ))}
