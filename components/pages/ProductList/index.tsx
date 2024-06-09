@@ -26,6 +26,10 @@ export default function ProductListPage({ products, lastPage, totalCount }: Prop
   const search = searchParams.get('search') ?? undefined;
   const { handleAxiosError } = useAxiosError();
 
+  const currentUrl = `${pathname}?${searchParams.toString()}`;
+
+  const addProductPath = `${PATHS.ADD_PRODUCT}?${createQueryString('callbackUrl', currentUrl)}`;
+
   const handlePageChange = (page: number) => {
     router.push(`${pathname}?${createQueryString('page', `${page}`)}`);
   };
@@ -37,14 +41,14 @@ export default function ProductListPage({ products, lastPage, totalCount }: Prop
   };
 
   const handleProductEdit = (productId: string) => {
-    router.push(`${PATHS.EDIT_PRODUCT}/${productId}?${createQueryString('callbackUrl', pathname)}`);
+    router.push(
+      `${PATHS.EDIT_PRODUCT}/${productId}?${createQueryString('callbackUrl', currentUrl)}`,
+    );
   };
 
   const handleOptionDelete = (productId: string) => async (optionId: string) => {
     try {
-      await axios.delete(
-        `${API_ROUTE.DELETE_PRODUCT_OPTION}?productId=${productId}&optionId=${optionId}`,
-      );
+      await axios.delete(`${API_ROUTE.PRODUCT}/${productId}/option/${optionId}`);
       toast({
         description: '상품 옵션 삭제 성공',
         variant: 'success',
@@ -58,7 +62,7 @@ export default function ProductListPage({ products, lastPage, totalCount }: Prop
   return (
     <div className="max-w-6xl mx-auto px-2 py-4">
       <PageHeader title="상품 목록">
-        <Link href={PATHS.ADD_PRODUCT}>
+        <Link href={addProductPath}>
           <Button>상품 등록</Button>
         </Link>
       </PageHeader>
@@ -71,7 +75,7 @@ export default function ProductListPage({ products, lastPage, totalCount }: Prop
           <div className="flex flex-col items-center py-16 gap-4">
             <p>등록된 상품이 없습니다.</p>
             <p>
-              <Link href={PATHS.ADD_PRODUCT}>
+              <Link href={addProductPath}>
                 <Button>상품 등록</Button>
               </Link>{' '}
               버튼을 눌러 상품을 추가하세요.

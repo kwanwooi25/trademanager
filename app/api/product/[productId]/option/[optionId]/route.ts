@@ -1,14 +1,14 @@
 import { getUserFromSession, handleFail, handlePrismaClientError, handleSuccess } from '@/lib/api';
 import { prisma } from '@/lib/prisma';
-import { deleteImage } from '@/lib/s3';
 import { HttpStatusCode } from 'axios';
 import { NextRequest } from 'next/server';
 
-export async function DELETE(req: NextRequest) {
+export async function DELETE(
+  req: NextRequest,
+  { params: { productId, optionId } }: { params: { productId: string; optionId: string } },
+) {
   await getUserFromSession();
 
-  const productId = req.nextUrl.searchParams.get('productId');
-  const optionId = req.nextUrl.searchParams.get('optionId');
   if (!productId || !optionId) {
     return handleFail({
       status: HttpStatusCode.BadRequest,
