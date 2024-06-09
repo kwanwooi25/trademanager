@@ -22,26 +22,18 @@ import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { CompanyFormSchema, formSchema } from './formSchema';
 
-const formSchema = z.object({
-  crn: z.string({ message: '사업자등록번호를 입력해주세요' }),
-  name: z.string({ message: '사업자명을 입력해주세요' }),
-  phone: z.string(),
-  repName: z.string({ message: '대표자명을 입력해주세요' }),
-  repMobile: z.string({ message: '대표자 휴대폰 번호를 입력해주세요' }),
-});
-
-export default function RegisterCompanyPage() {
+export default function CompanyFormPage() {
   const { toast } = useToast();
   const { handleAxiosError } = useAxiosError();
   const router = useRouter();
   const session = useSession();
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<CompanyFormSchema>({
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: CompanyFormSchema) => {
     try {
       const { data } = await axios.post<SuccessResponse<Company>>(
         API_ROUTE.REGISTER_COMPANY,

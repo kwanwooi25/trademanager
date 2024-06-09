@@ -1,4 +1,4 @@
-import RegisterCompanyPage from '@/components/pages/RegisterCompany';
+import CompanyFormPage from '@/components/pages/CompanyForm';
 import { withAuth } from '@/lib/auth/hoc';
 
-export default withAuth(RegisterCompanyPage);
+export default withAuth(CompanyFormPage);

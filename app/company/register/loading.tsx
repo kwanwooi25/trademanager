@@ -1,3 +1,3 @@
-import RegisterCompanySkeleton from '@/components/pages/RegisterCompany/skeleton';
+import RegisterCompanySkeleton from '@/components/pages/CompanyForm/skeleton';
 
 export default RegisterCompanySkeleton;
