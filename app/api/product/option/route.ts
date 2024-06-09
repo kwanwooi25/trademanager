@@ -1,5 +1,6 @@
 import { getUserFromSession, handleFail, handlePrismaClientError, handleSuccess } from '@/lib/api';
 import { prisma } from '@/lib/prisma';
+import { deleteImage } from '@/lib/s3';
 import { HttpStatusCode } from 'axios';
 import { NextRequest } from 'next/server';
 
@@ -25,9 +26,8 @@ export async function DELETE(req: NextRequest) {
       return handleSuccess({ data: null, status: HttpStatusCode.Ok });
     }
     await prisma.productOption.delete({ where: { id: optionId } });
-    return handleSuccess({ data: {}, status: HttpStatusCode.Ok });
+    return handleSuccess({ data: null, status: HttpStatusCode.Ok });
   } catch (e) {
-    console.log(e);
     return handlePrismaClientError(e);
   }
 }

@@ -2,9 +2,9 @@
 
 import PageBody from '@/components/PageBody';
 import PageHeader from '@/components/PageHeader';
-import ProductOptionForm from '@/components/pages/AddProduct/ProductOptionForm';
-import { DEFAULT_PRODUCT_OPTION } from '@/components/pages/AddProduct/const';
-import { formSchema, type ProductFormSchema } from '@/components/pages/AddProduct/formSchema';
+import ProductOptionForm from '@/components/pages/ProductForm/ProductOptionForm';
+import { DEFAULT_PRODUCT_OPTION } from '@/components/pages/ProductForm/const';
+import { formSchema, type ProductFormSchema } from '@/components/pages/ProductForm/formSchema';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -19,33 +19,40 @@ import { useToast } from '@/components/ui/use-toast';
 import { API_ROUTE, PATHS } from '@/const/paths';
 import { useAxiosError } from '@/hooks/useAxiosError';
 import { SuccessResponse } from '@/types/api';
+import { ProductWithOptions } from '@/types/product';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Product } from '@prisma/client';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
+import { getDefaultFormValues } from './utils';
 
-export default function AddProductPage() {
+export default function ProductFormPage({ product }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
   const { handleAxiosError } = useAxiosError();
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<ProductFormSchema>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: '',
-      purchasedAt: '',
-      options: [{ ...DEFAULT_PRODUCT_OPTION }],
-    },
+    defaultValues: getDefaultFormValues(product),
   });
+
+  const isEditing = !!product;
+  const title = isEditing ? '상품 수정' : '상품 등록';
+  const callbackUrl = searchParams.get('callbackUrl') ?? PATHS.PRODUCT_LIST;
 
   const onSubmit = async (values: ProductFormSchema) => {
     setIsLoading(true);
 
     try {
-      const { data } = await axios.post<SuccessResponse<Product>>(API_ROUTE.ADD_PRODUCT, values, {
+      const method = isEditing ? 'patch' : 'post';
+      const { data } = await axios<SuccessResponse<Product>>({
+        method,
+        url: API_ROUTE.PRODUCT,
+        data: values,
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -54,12 +61,12 @@ export default function AddProductPage() {
       toast({
         description: (
           <p>
-            상품 등록 성공 (<b>{data.data.name}</b>)
+            {title} 성공 (<b>{data.data.name}</b>)
           </p>
         ),
         variant: 'success',
       });
-      router.replace(PATHS.PRODUCT_LIST);
+      router.replace(callbackUrl);
     } catch (error) {
       handleAxiosError(error);
     } finally {
@@ -70,11 +77,18 @@ export default function AddProductPage() {
   const { fields, append, remove, update } = useFieldArray({
     control: form.control,
     name: 'options',
+    keyName: 'fieldId',
   });
 
   const addOption = () => append({ ...DEFAULT_PRODUCT_OPTION });
 
   const handleRemove = (index: number) => {
+    const optionIdsToDelete = form.getValues('optionIdsToDelete') ?? [];
+    const optionId = fields[index].id;
+    if (optionId) {
+      form.setValue('optionIdsToDelete', [...optionIdsToDelete, optionId]);
+    }
+
     if (fields.length <= 1) {
       update(index, { ...DEFAULT_PRODUCT_OPTION });
       return;
@@ -86,10 +100,10 @@ export default function AddProductPage() {
   return (
     <Form {...form}>
       <form className="max-w-3xl mx-auto px-2 py-4" onSubmit={form.handleSubmit(onSubmit)}>
-        <PageHeader title="상품 등록" backButton>
+        <PageHeader title={title} backButton>
           <Button type="submit" disabled={isLoading}>
             {isLoading && <Loader2 className={'mr-2 h-4 w-4 animate-spin'} />}
-            상품 등록
+            <span>{title}</span>
           </Button>
         </PageHeader>
         <PageBody className="flex flex-col gap-4">
@@ -129,9 +143,9 @@ export default function AddProductPage() {
                 옵션 추가
               </Button>
             </div>
-            {fields.map(({ id, ...option }, index) => (
+            {fields.map(({ fieldId, ...option }, index) => (
               <ProductOptionForm
-                key={id}
+                key={fieldId}
                 index={index}
                 option={option}
                 onUpdate={update}
@@ -144,3 +158,7 @@ export default function AddProductPage() {
     </Form>
   );
 }
+
+type Props = {
+  product?: ProductWithOptions | null;
+};

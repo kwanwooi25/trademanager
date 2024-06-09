@@ -3,8 +3,8 @@ import { FormEventHandler, useState } from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
-export default function SearchInput({ onSearch, placeholder = 'Search...' }: Props) {
-  const [value, setValue] = useState('');
+export default function SearchInput({ search = '', onSearch, placeholder = 'Search...' }: Props) {
+  const [value, setValue] = useState(search);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -43,6 +43,7 @@ export default function SearchInput({ onSearch, placeholder = 'Search...' }: Pro
 }
 
 type Props = {
+  search?: string;
   onSearch: (input: string) => void;
   placeholder?: string;
 };

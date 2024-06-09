@@ -1,52 +1,42 @@
+import ProductOptionImageForm from '@/components/pages/ProductForm/ProductOptionImageForm';
 import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
+  COUNTRY_SELECT_OPTIONS,
+  CURRENCY_SELECT_OPTIONS,
+} from '@/components/pages/ProductForm/const';
+import type { ProductFormSchema } from '@/components/pages/ProductForm/formSchema';
+import { Button } from '@/components/ui/button';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
-import {
-  COUNTRY_SELECT_OPTIONS,
-  CURRENCY_SELECT_OPTIONS
-} from '@/components/pages/AddProduct/const';
-import { useFormContext } from 'react-hook-form';
 import { LucideX } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import ProductOptionImageForm
-  from '@/components/pages/AddProduct/ProductOptionImageForm';
-import type {
-  ProductFormSchema
-} from '@/components/pages/AddProduct/formSchema';
 import type { ComponentProps } from 'react';
+import { useFormContext } from 'react-hook-form';
 
-export default function ProductOptionForm({
-  index,
-  option,
-  onUpdate,
-  onRemove
-}: Props) {
+export default function ProductOptionForm({ index, option, onUpdate, onRemove }: Props) {
   const form = useFormContext<ProductFormSchema>();
-  
-  const handleImageChange: ComponentProps<typeof ProductOptionImageForm>['onChange'] = ({ imageFile }) => {
+
+  const handleImageChange: ComponentProps<typeof ProductOptionImageForm>['onChange'] = ({
+    imageFile,
+  }) => {
     if (!imageFile) return;
     onUpdate(index, { ...option, imageFile });
   };
-  
+
   const handleImageRemove: ComponentProps<typeof ProductOptionImageForm>['onRemove'] = () => {
-    onUpdate(index, { ...option, imageFile: null });
+    onUpdate(index, { ...option, imageFile: null, imageUrl: undefined });
   };
-  
+
   return (
     <div
-      className={'relative p-4 pt-8 border border-accent rounded-md gap-4 grid grid-cols-[auto_2fr_1fr]'}
+      className={
+        'relative p-4 pt-8 border border-accent rounded-md gap-4 grid grid-cols-[auto_2fr_1fr]'
+      }
     >
       <Button
         onClick={() => onRemove(index)}
@@ -55,10 +45,13 @@ export default function ProductOptionForm({
         size={'icon'}
         type={'button'}
         tabIndex={-1}
-      ><LucideX/></Button>
+      >
+        <LucideX />
+      </Button>
       <div className={'w-56 h-56'}>
         <ProductOptionImageForm
           imageFile={form.getValues('options')[index]?.imageFile}
+          imageUrl={form.getValues('options')[index]?.imageUrl}
           onChange={handleImageChange}
           onRemove={handleImageRemove}
         />
@@ -73,7 +66,7 @@ export default function ProductOptionForm({
               <FormControl>
                 <Input {...field} />
               </FormControl>
-              <FormMessage/>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -84,27 +77,21 @@ export default function ProductOptionForm({
             render={({ field }) => (
               <FormItem className={'flex-1'}>
                 <FormLabel>화폐</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder={'Choose a currency'}/>
+                      <SelectValue placeholder={'Choose a currency'} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {CURRENCY_SELECT_OPTIONS.map(({ value, label }) =>
-                      <SelectItem
-                        key={value}
-                        value={value}
-                      >
+                    {CURRENCY_SELECT_OPTIONS.map(({ value, label }) => (
+                      <SelectItem key={value} value={value}>
                         {label}
                       </SelectItem>
-                    )}
+                    ))}
                   </SelectContent>
                 </Select>
-                <FormMessage/>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -115,9 +102,9 @@ export default function ProductOptionForm({
               <FormItem>
                 <FormLabel>단가</FormLabel>
                 <FormControl>
-                  <Input {...field} format={'numberOnly'}/>
+                  <Input {...field} format={'numberOnly'} />
                 </FormControl>
-                <FormMessage/>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -128,27 +115,21 @@ export default function ProductOptionForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>수입국</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-              >
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder={'Choose a currency'}/>
+                    <SelectValue placeholder={'Choose a currency'} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {COUNTRY_SELECT_OPTIONS.map(({ value, label }) =>
-                    <SelectItem
-                      key={value}
-                      value={value}
-                    >
+                  {COUNTRY_SELECT_OPTIONS.map(({ value, label }) => (
+                    <SelectItem key={value} value={value}>
                       {label}
                     </SelectItem>
-                  )}
+                  ))}
                 </SelectContent>
               </Select>
-              <FormMessage/>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -161,9 +142,9 @@ export default function ProductOptionForm({
             <FormItem>
               <FormLabel>수량</FormLabel>
               <FormControl>
-                <Input {...field} format={'numberOnly'}/>
+                <Input {...field} format={'numberOnly'} />
               </FormControl>
-              <FormMessage/>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -174,9 +155,9 @@ export default function ProductOptionForm({
             <FormItem>
               <FormLabel>입고소요일</FormLabel>
               <FormControl>
-                <Input {...field} format={'numberOnly'}/>
+                <Input {...field} format={'numberOnly'} />
               </FormControl>
-              <FormMessage/>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -189,7 +170,7 @@ export default function ProductOptionForm({
               <FormControl>
                 <Input {...field} />
               </FormControl>
-              <FormMessage/>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -203,4 +184,4 @@ type Props = {
   option: ProductFormSchema['options'][number];
   onUpdate: (index: number, option: ProductFormSchema['options'][number]) => void;
   onRemove: (index: number) => void;
-}
+};

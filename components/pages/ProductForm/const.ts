@@ -1,7 +1,5 @@
 import { Country, Currency, ProductOptionStatus } from '@prisma/client';
-import type {
-  ProductFormSchema
-} from '@/components/pages/AddProduct/formSchema';
+import type { ProductFormSchema } from '@/components/pages/ProductForm/formSchema';
 
 export const DEFAULT_PRODUCT_OPTION: ProductFormSchema['options'][number] = {
   imageFile: null,
@@ -12,12 +10,12 @@ export const DEFAULT_PRODUCT_OPTION: ProductFormSchema['options'][number] = {
   location: '',
 };
 
-export const CURRENCY_SELECT_OPTIONS = Object.values(Currency).map(currency => ({
+export const CURRENCY_SELECT_OPTIONS = Object.values(Currency).map((currency) => ({
   value: currency,
-  label: currency
+  label: currency,
 }));
 
-export const COUNTRY_SELECT_OPTIONS = Object.values(Country).map(country => ({
+export const COUNTRY_SELECT_OPTIONS = Object.values(Country).map((country) => ({
   value: country,
-  label: country
+  label: country,
 }));

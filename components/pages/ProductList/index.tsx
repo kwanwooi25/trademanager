@@ -23,6 +23,7 @@ export default function ProductListPage({ products, lastPage, totalCount }: Prop
   const searchParams = useSearchParams();
   const createQueryString = useCreateQueryString();
   const page = +(searchParams.get('page') || 1);
+  const search = searchParams.get('search') ?? undefined;
   const { handleAxiosError } = useAxiosError();
 
   const handlePageChange = (page: number) => {
@@ -30,7 +31,13 @@ export default function ProductListPage({ products, lastPage, totalCount }: Prop
   };
 
   const handleSearch = (input: string) => {
-    router.push(`${pathname}?${createQueryString('search', `${input}`)}`);
+    router.push(
+      `${pathname}?${createQueryString('search', `${input}`)}&${createQueryString('page', '1')}`,
+    );
+  };
+
+  const handleProductEdit = (productId: string) => {
+    router.push(`${PATHS.EDIT_PRODUCT}/${productId}?${createQueryString('callbackUrl', pathname)}`);
   };
 
   const handleOptionDelete = (productId: string) => async (optionId: string) => {
@@ -56,7 +63,11 @@ export default function ProductListPage({ products, lastPage, totalCount }: Prop
         </Link>
       </PageHeader>
       <PageBody className={'flex flex-col gap-4'}>
-        {!products.length ? (
+        {(!!products.length || !!search) && (
+          <ProductListFilter search={search} onSearch={handleSearch} totalCount={totalCount} />
+        )}
+
+        {!products.length && !search && (
           <div className="flex flex-col items-center py-16 gap-4">
             <p>등록된 상품이 없습니다.</p>
             <p>
@@ -66,15 +77,23 @@ export default function ProductListPage({ products, lastPage, totalCount }: Prop
               버튼을 눌러 상품을 추가하세요.
             </p>
           </div>
-        ) : (
+        )}
+
+        {!products.length && !!search && (
+          <div className="flex flex-col items-center py-16 gap-4">
+            <p>검색된 상품이 없습니다.</p>
+          </div>
+        )}
+
+        {!!products.length && (
           <>
-            <ProductListFilter onSearch={handleSearch} totalCount={totalCount} />
             <ul className="flex flex-col">
               <ProductListHeader />
               {products.map((product) => (
                 <ProductListItem
                   key={product.id}
                   product={product}
+                  onProductEdit={handleProductEdit}
                   onOptionDelete={handleOptionDelete(product.id)}
                 />
               ))}

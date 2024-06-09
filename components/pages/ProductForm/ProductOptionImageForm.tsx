@@ -1,26 +1,22 @@
-import { LucideFileUp, LucideX } from 'lucide-react';
 import Dropzone from '@/components/Dropzone/BaseDropzone';
-import type { ComponentProps } from 'react';
 import { Button } from '@/components/ui/button';
+import { LucideFileUp, LucideX } from 'lucide-react';
+import type { ComponentProps } from 'react';
 
-export default function ProductOptionImageForm({
-  imageFile,
-  imageUrl,
-  onChange,
-  onRemove,
-}: Props) {
+export default function ProductOptionImageForm({ imageFile, imageUrl, onChange, onRemove }: Props) {
   const handleDrop: ComponentProps<typeof Dropzone>['onDrop'] = async (acceptedFiles) => {
     if (!acceptedFiles.length) return;
-    
+
     onChange?.({ imageFile: acceptedFiles[0] });
   };
-  
+
   const hasImage = !!imageFile || !!imageUrl;
   if (hasImage) {
     return (
-      <div className={'relative'}>
+      <div className={'relative w-full h-full flex justify-center items-center'}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          className={'w-full h-full object-center'}
+          className={'w-full object-center'}
           src={imageUrl || URL.createObjectURL(imageFile!)}
           alt={'product option image'}
         />
@@ -31,23 +27,25 @@ export default function ProductOptionImageForm({
           size={'icon'}
           type={'button'}
           tabIndex={-1}
-        ><LucideX/></Button>
+        >
+          <LucideX />
+        </Button>
       </div>
     );
   }
-  
+
   return (
     <Dropzone
       label={
         <div className="flex flex-col items-center gap-2 py-6">
-          <LucideFileUp/>
+          <LucideFileUp />
           <p className="text-center text-xs">
             <span className="text-sm font-bold">Drag & Drop</span>
-            <br/>
+            <br />
             또는
-            <br/>
+            <br />
             <span className="text-sm font-bold">클릭</span>하여
-            <br/>
+            <br />
             이미지 업로드
           </p>
         </div>
@@ -63,7 +61,7 @@ export default function ProductOptionImageForm({
 
 type Props = {
   imageFile?: File;
-  imageUrl?: string;
-  onChange?: (value: { imageFile?: File, imageUrl?: string }) => void;
+  imageUrl?: string | null;
+  onChange?: (value: { imageFile?: File; imageUrl?: string }) => void;
   onRemove?: () => void;
-}
+};
