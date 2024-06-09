@@ -82,12 +82,13 @@ model Company {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  users    User[]
-  products Product[]
+  users          User[]
+  products       Product[]
+  purchaseOrders PurchaseOrder[]
 }
 
 model Product {
-  id          String  @id @default(cuid())
+  id          String @id @default(cuid())
   name        String
   purchasedAt String
 
@@ -117,6 +118,28 @@ model ProductOption {
 
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  purchaseOrders PurchaseOrder[]
+}
+
+model PurchaseOrder {
+  id               String              @id @default(cuid())
+  orderedQuantity  Int                 @default(0)
+  orderedAt        DateTime
+  receivedQuantity Int?                @default(0)
+  receivedAt       DateTime?
+  status           PurchaseOrderStatus @default(ORDERED)
+
+  productOptionId String
+  productOption   ProductOption @relation(fields: [productOptionId], references: [id], onDelete: Cascade)
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+enum PurchaseOrderStatus {
+  ORDERED
+  RECEIVED
 }
 
 enum ProductOptionStatus {
