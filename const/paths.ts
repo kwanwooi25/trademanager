@@ -4,6 +4,7 @@ export const PATHS = {
   PRODUCT_LIST: '/product',
   ADD_PRODUCT: '/product/add',
   EDIT_PRODUCT: '/product/edit',
+  ADD_PURCHASE_ORDER: '/purchase-order/add',
 } as const;
 
 export const API_ROUTE = {

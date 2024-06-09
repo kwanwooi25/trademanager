@@ -5,7 +5,7 @@ export const NAV_LIST = [
     protected: true,
   },
   {
-    href: '/purchase',
+    href: '/purchase-order',
     label: '구매 관리',
     protected: true,
   },
