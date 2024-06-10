@@ -1,3 +1,5 @@
+'use client';
+
 import ProductImage from '@/components/ProductImage';
 import { Button } from '@/components/ui/button';
 import {

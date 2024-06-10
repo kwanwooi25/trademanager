@@ -1,41 +1,44 @@
+'use client';
+
 import PurchaseOrderStatusSelect from '@/components/PurchaseOrderStatusSelect';
 import SearchInput from '@/components/SearchInput';
 import { GetPurchaseOrdersFilter } from '@/types/purchaseOrder';
+import { usePathname, useRouter } from 'next/navigation';
 import { ComponentProps } from 'react';
+import { usePurchaseOrderListFilter } from './useListFilter';
 
-export default function PurchaseOrderListFilter({ filter, onFilterChange, totalCount = 0 }: Props) {
+export default function PurchaseOrderListFilter() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const filter = usePurchaseOrderListFilter();
+
+  const handleFilterChange = (filter: GetPurchaseOrdersFilter) => {
+    const params = new URLSearchParams(filter);
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
   const handleSearch = (search: string) => {
-    onFilterChange({ ...filter, search });
+    handleFilterChange({ ...filter, search });
   };
 
   const handlePurchaseOrderStatusChange: ComponentProps<
     typeof PurchaseOrderStatusSelect
   >['onChange'] = (status) => {
-    onFilterChange({ ...filter, status });
+    handleFilterChange({ ...filter, status });
   };
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <SearchInput
-          search={filter.search}
-          onSearch={handleSearch}
-          placeholder="상품명/옵션명으로 검색"
-        />
-        <PurchaseOrderStatusSelect
-          value={filter.status}
-          onChange={handlePurchaseOrderStatusChange}
-        />
-      </div>
-      <span className="text-sm">
-        검색 결과: <span className="text-lg font-bold">{totalCount.toLocaleString()}</span>건
-      </span>
+    <div className="flex items-center gap-2">
+      <SearchInput
+        search={filter.search}
+        onSearch={handleSearch}
+        placeholder="상품명/옵션명으로 검색"
+      />
+      <PurchaseOrderStatusSelect value={filter.status} onChange={handlePurchaseOrderStatusChange} />
     </div>
   );
 }
 
 type Props = {
-  filter: GetPurchaseOrdersFilter;
-  onFilterChange: (filter: GetPurchaseOrdersFilter) => void;
   totalCount?: number;
 };

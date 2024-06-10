@@ -1,3 +1,6 @@
+'use client';
+
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   Pagination as PaginationBase,
   PaginationContent,
@@ -16,17 +19,31 @@ export default function Pagination({
   lastPage,
   maxPagesToDisplay = 4,
 }: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const pages = Array.from({ length: lastPage }, (_, i) => i + 1);
   const pagesToDisplay = getPagesToDisplay({ pages, currentPage, maxPagesToDisplay });
 
-  const moveToPage = (p: number) => onChange(p);
+  const handlePageChange = (p: number) => {
+    if (onChange) {
+      onChange(p);
+    } else {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('page', `${p}`);
+      router.push(`${pathname}?${params.toString()}`);
+    }
+  };
+
+  const moveToPage = (p: number) => handlePageChange(p);
+
   const moveToPrevPage = () => {
     const prevPage = Math.max(currentPage - 1, firstPage);
-    onChange(prevPage);
+    handlePageChange(prevPage);
   };
   const moveToNextPage = () => {
     const nextPage = Math.max(currentPage + 1, lastPage);
-    onChange(nextPage);
+    handlePageChange(nextPage);
   };
 
   return (
@@ -70,7 +87,7 @@ export default function Pagination({
 
 type Props = {
   currentPage: number;
-  onChange: (page: number) => void;
+  onChange?: (page: number) => void;
   firstPage?: number;
   lastPage: number;
   maxPagesToDisplay?: number;
