@@ -2,7 +2,7 @@ import PageBody from '@/components/PageBody';
 import PageHeader from '@/components/PageHeader';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export default function ProductListSkeleton() {
+export default function PurchaseOrderListSkeleton() {
   return (
     <div className="max-w-6xl mx-auto px-2 py-4">
       <PageHeader title={<Skeleton className="h-7 w-20" />}>
@@ -18,10 +18,11 @@ export default function ProductListSkeleton() {
         </div>
 
         <ul className="flex flex-col">
-          <li className="px-4 py-6 grid items-center gap-4 grid-cols-[2fr_auto_2fr_1fr_1fr_1fr_1fr_40px] text-sm font-semibold border-y">
+          <li className="px-4 py-6 grid items-center gap-4 grid-cols-[100px_70px_2fr_60px_1fr_100px_100px_100px_40px] text-sm font-semibold border-y">
+            <Skeleton className="h-5" />
+            <Skeleton className="h-5" />
             <Skeleton className="h-5" />
             <span className="w-[60px]"></span>
-            <Skeleton className="h-5" />
             <Skeleton className="h-5" />
             <Skeleton className="h-5" />
             <Skeleton className="h-5" />
@@ -33,16 +34,17 @@ export default function ProductListSkeleton() {
             .map((_, i) => (
               <li
                 key={i}
-                className="px-4 py-2 grid items-center gap-4 grid-cols-[2fr_auto_2fr_1fr_1fr_1fr_1fr_40px] border-b p-2"
+                className="px-4 py-2 grid items-center gap-4 grid-cols-[100px_70px_2fr_60px_1fr_100px_100px_100px_40px] border-b p-2"
               >
-                <Skeleton className="h-7" />
-                <Skeleton className="h-[60px] w-[60px]" />
-                <Skeleton className="h-6" />
-                <Skeleton className="h-6" />
-                <Skeleton className="h-6" />
-                <Skeleton className="h-6" />
-                <Skeleton className="h-6" />
-                <Skeleton className="h-10 w-10" />
+                <Skeleton className="h-5" />
+                <Skeleton className="h-5" />
+                <Skeleton className="h-5" />
+                <Skeleton className="w-[60px] h-[60px]" />
+                <Skeleton className="h-5" />
+                <Skeleton className="h-5" />
+                <Skeleton className="h-5" />
+                <Skeleton className="h-5" />
+                <Skeleton className="w-10 h-10" />
               </li>
             ))}
         </ul>

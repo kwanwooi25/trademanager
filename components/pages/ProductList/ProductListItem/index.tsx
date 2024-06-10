@@ -23,7 +23,7 @@ export default function ProductListItem({ product, onProductEdit, onOptionDelete
   const handleClickDelete = (optionId: string) => () => onOptionDelete(optionId);
 
   return (
-    <li className="px-4 py-2 grid items-center gap-4 grid-cols-[2fr_auto_2fr_1fr_1fr_1fr_1fr_60px] border-b p-2">
+    <li className="px-4 py-2 grid items-center gap-4 grid-cols-[2fr_auto_2fr_1fr_1fr_1fr_1fr_40px] border-b p-2">
       {options.map(
         (
           { id, imageUrl, name, currency, unitPrice, inventoryQuantity, leadtime, location },

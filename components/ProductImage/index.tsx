@@ -10,12 +10,12 @@ export default function ProductImage({ className, imageUrl, size = DEFAULT_IMAGE
   return (
     <div className="flex items-center" style={{ width: size, height: size }}>
       <Image
-        className={cn('w-full h-full', className)}
+        className={cn('w-full h-full rounded-md', className)}
         src={src}
         alt={src}
         width={size}
         height={size}
-        style={{ objectFit: 'contain' }}
+        style={{ objectFit: 'cover' }}
       />
     </div>
   );

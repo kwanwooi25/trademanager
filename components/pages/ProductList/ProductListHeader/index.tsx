@@ -1,6 +1,6 @@
 export default function ProductListHeader() {
   return (
-    <li className="px-4 py-6 grid items-center gap-4 grid-cols-[2fr_auto_2fr_1fr_1fr_1fr_1fr_60px] text-sm font-semibold border-y">
+    <li className="px-4 py-6 grid items-center gap-4 grid-cols-[2fr_auto_2fr_1fr_1fr_1fr_1fr_40px] text-sm font-semibold border-y">
       <span>상품명</span>
       <span className="w-[60px]"></span>
       <span>옵션명</span>
