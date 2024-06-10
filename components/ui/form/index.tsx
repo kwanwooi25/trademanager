@@ -12,6 +12,9 @@ import {
 
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import DateFormField from './DateFormField';
+import InputFormField from './InputFormField';
+import SelectFormField from './SelectFormField';
 
 const Form = FormProvider;
 
@@ -164,4 +167,9 @@ export {
   FormLabel,
   FormMessage,
   useFormField,
+
+  // presets
+  DateFormField,
+  InputFormField,
+  SelectFormField,
 };

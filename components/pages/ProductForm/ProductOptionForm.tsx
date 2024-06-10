@@ -76,11 +76,11 @@ export default function ProductOptionForm({ index, option, onUpdate, onRemove }:
             name={`options.${index}.currency`}
             render={({ field }) => (
               <FormItem className={'flex-1'}>
-                <FormLabel>화폐</FormLabel>
+                <FormLabel>화폐 단위</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder={'Choose a currency'} />
+                      <SelectValue placeholder={'화폐 단위 선택'} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -118,7 +118,7 @@ export default function ProductOptionForm({ index, option, onUpdate, onRemove }:
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder={'Choose a currency'} />
+                    <SelectValue placeholder={'수입국 선택'} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>

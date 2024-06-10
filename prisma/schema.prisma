@@ -84,6 +84,7 @@ model Company {
 
   users          User[]
   products       Product[]
+  productOptions ProductOption[]
   purchaseOrders PurchaseOrder[]
 }
 
@@ -118,6 +119,9 @@ model ProductOption {
 
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   purchaseOrders PurchaseOrder[]
 }

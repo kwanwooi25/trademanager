@@ -1,11 +1,13 @@
+import { PATHS } from '@/const/paths';
+
 export const NAV_LIST = [
   {
-    href: '/product',
+    href: PATHS.PRODUCT_LIST,
     label: '상품 관리',
     protected: true,
   },
   {
-    href: '/purchase-order',
+    href: PATHS.PURCHASE_ORDER_LIST,
     label: '구매 관리',
     protected: true,
   },

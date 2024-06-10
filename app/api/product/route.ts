@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
             unitPrice: option.unitPrice ? +option.unitPrice : 0,
             inventoryQuantity: option.inventoryQuantity ? +option.inventoryQuantity : 0,
             leadtime: option.leadtime ? +option.leadtime : 0,
+            companyId: user?.companyId!,
           };
           if (!imageFile) {
             return optionToCreate;
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest) {
     const product = await prisma.product.create({
       data: {
         ...productToCreate,
-        companyId: user!.companyId!,
+        companyId: user?.companyId!,
         options: {
           createMany: {
             data: optionsToCreate,
@@ -53,7 +54,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  await getUserFromSession();
+  const user = await getUserFromSession();
 
   try {
     const formData = await req.formData();
@@ -75,7 +76,7 @@ export async function PATCH(req: NextRequest) {
           };
 
           if (!option.id) {
-            optionsToCreate.push(optionToCreateOrUpdate);
+            optionsToCreate.push({ ...optionToCreateOrUpdate, companyId: user?.companyId! });
             return;
           }
 

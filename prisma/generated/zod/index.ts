@@ -22,7 +22,7 @@ export const CompanyScalarFieldEnumSchema = z.enum(['id','crn','name','phone','r
 
 export const ProductScalarFieldEnumSchema = z.enum(['id','name','purchasedAt','createdAt','updatedAt','companyId']);
 
-export const ProductOptionScalarFieldEnumSchema = z.enum(['id','name','imageUrl','unitPrice','currency','importedFrom','inventoryQuantity','leadtime','status','location','createdAt','updatedAt','productId']);
+export const ProductOptionScalarFieldEnumSchema = z.enum(['id','name','imageUrl','unitPrice','currency','importedFrom','inventoryQuantity','leadtime','status','location','createdAt','updatedAt','productId','companyId']);
 
 export const PurchaseOrderScalarFieldEnumSchema = z.enum(['id','orderedQuantity','orderedAt','receivedQuantity','receivedAt','status','productOptionId','companyId']);
 
@@ -42,7 +42,7 @@ export const CompanyOrderByRelevanceFieldEnumSchema = z.enum(['id','crn','name',
 
 export const ProductOrderByRelevanceFieldEnumSchema = z.enum(['id','name','purchasedAt','companyId']);
 
-export const ProductOptionOrderByRelevanceFieldEnumSchema = z.enum(['id','name','imageUrl','location','productId']);
+export const ProductOptionOrderByRelevanceFieldEnumSchema = z.enum(['id','name','imageUrl','location','productId','companyId']);
 
 export const PurchaseOrderOrderByRelevanceFieldEnumSchema = z.enum(['id','productOptionId','companyId']);
 
@@ -172,6 +172,7 @@ export const ProductOptionSchema = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   productId: z.string(),
+  companyId: z.string(),
 })
 
 export type ProductOption = z.infer<typeof ProductOptionSchema>
@@ -293,6 +294,7 @@ export const SessionSelectSchema: z.ZodType<Prisma.SessionSelect> = z.object({
 export const CompanyIncludeSchema: z.ZodType<Prisma.CompanyInclude> = z.object({
   users: z.union([z.boolean(),z.lazy(() => UserFindManyArgsSchema)]).optional(),
   products: z.union([z.boolean(),z.lazy(() => ProductFindManyArgsSchema)]).optional(),
+  productOptions: z.union([z.boolean(),z.lazy(() => ProductOptionFindManyArgsSchema)]).optional(),
   purchaseOrders: z.union([z.boolean(),z.lazy(() => PurchaseOrderFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => CompanyCountOutputTypeArgsSchema)]).optional(),
 }).strict()
@@ -309,6 +311,7 @@ export const CompanyCountOutputTypeArgsSchema: z.ZodType<Prisma.CompanyCountOutp
 export const CompanyCountOutputTypeSelectSchema: z.ZodType<Prisma.CompanyCountOutputTypeSelect> = z.object({
   users: z.boolean().optional(),
   products: z.boolean().optional(),
+  productOptions: z.boolean().optional(),
   purchaseOrders: z.boolean().optional(),
 }).strict();
 
@@ -325,6 +328,7 @@ export const CompanySelectSchema: z.ZodType<Prisma.CompanySelect> = z.object({
   updatedAt: z.boolean().optional(),
   users: z.union([z.boolean(),z.lazy(() => UserFindManyArgsSchema)]).optional(),
   products: z.union([z.boolean(),z.lazy(() => ProductFindManyArgsSchema)]).optional(),
+  productOptions: z.union([z.boolean(),z.lazy(() => ProductOptionFindManyArgsSchema)]).optional(),
   purchaseOrders: z.union([z.boolean(),z.lazy(() => PurchaseOrderFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => CompanyCountOutputTypeArgsSchema)]).optional(),
 }).strict()
@@ -368,6 +372,7 @@ export const ProductSelectSchema: z.ZodType<Prisma.ProductSelect> = z.object({
 
 export const ProductOptionIncludeSchema: z.ZodType<Prisma.ProductOptionInclude> = z.object({
   product: z.union([z.boolean(),z.lazy(() => ProductArgsSchema)]).optional(),
+  company: z.union([z.boolean(),z.lazy(() => CompanyArgsSchema)]).optional(),
   purchaseOrders: z.union([z.boolean(),z.lazy(() => PurchaseOrderFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => ProductOptionCountOutputTypeArgsSchema)]).optional(),
 }).strict()
@@ -399,7 +404,9 @@ export const ProductOptionSelectSchema: z.ZodType<Prisma.ProductOptionSelect> = 
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
   productId: z.boolean().optional(),
+  companyId: z.boolean().optional(),
   product: z.union([z.boolean(),z.lazy(() => ProductArgsSchema)]).optional(),
+  company: z.union([z.boolean(),z.lazy(() => CompanyArgsSchema)]).optional(),
   purchaseOrders: z.union([z.boolean(),z.lazy(() => PurchaseOrderFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => ProductOptionCountOutputTypeArgsSchema)]).optional(),
 }).strict()
@@ -706,6 +713,7 @@ export const CompanyWhereInputSchema: z.ZodType<Prisma.CompanyWhereInput> = z.ob
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   users: z.lazy(() => UserListRelationFilterSchema).optional(),
   products: z.lazy(() => ProductListRelationFilterSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionListRelationFilterSchema).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderListRelationFilterSchema).optional()
 }).strict();
 
@@ -722,6 +730,7 @@ export const CompanyOrderByWithRelationAndSearchRelevanceInputSchema: z.ZodType<
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   users: z.lazy(() => UserOrderByRelationAggregateInputSchema).optional(),
   products: z.lazy(() => ProductOrderByRelationAggregateInputSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionOrderByRelationAggregateInputSchema).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderOrderByRelationAggregateInputSchema).optional(),
   _relevance: z.lazy(() => CompanyOrderByRelevanceInputSchema).optional()
 }).strict();
@@ -754,6 +763,7 @@ export const CompanyWhereUniqueInputSchema: z.ZodType<Prisma.CompanyWhereUniqueI
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   users: z.lazy(() => UserListRelationFilterSchema).optional(),
   products: z.lazy(() => ProductListRelationFilterSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionListRelationFilterSchema).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderListRelationFilterSchema).optional()
 }).strict());
 
@@ -873,7 +883,9 @@ export const ProductOptionWhereInputSchema: z.ZodType<Prisma.ProductOptionWhereI
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   productId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  companyId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   product: z.union([ z.lazy(() => ProductRelationFilterSchema),z.lazy(() => ProductWhereInputSchema) ]).optional(),
+  company: z.union([ z.lazy(() => CompanyRelationFilterSchema),z.lazy(() => CompanyWhereInputSchema) ]).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderListRelationFilterSchema).optional()
 }).strict();
 
@@ -891,7 +903,9 @@ export const ProductOptionOrderByWithRelationAndSearchRelevanceInputSchema: z.Zo
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   productId: z.lazy(() => SortOrderSchema).optional(),
+  companyId: z.lazy(() => SortOrderSchema).optional(),
   product: z.lazy(() => ProductOrderByWithRelationAndSearchRelevanceInputSchema).optional(),
+  company: z.lazy(() => CompanyOrderByWithRelationAndSearchRelevanceInputSchema).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderOrderByRelationAggregateInputSchema).optional(),
   _relevance: z.lazy(() => ProductOptionOrderByRelevanceInputSchema).optional()
 }).strict();
@@ -916,7 +930,9 @@ export const ProductOptionWhereUniqueInputSchema: z.ZodType<Prisma.ProductOption
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   productId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  companyId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   product: z.union([ z.lazy(() => ProductRelationFilterSchema),z.lazy(() => ProductWhereInputSchema) ]).optional(),
+  company: z.union([ z.lazy(() => CompanyRelationFilterSchema),z.lazy(() => CompanyWhereInputSchema) ]).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderListRelationFilterSchema).optional()
 }).strict());
 
@@ -934,6 +950,7 @@ export const ProductOptionOrderByWithAggregationInputSchema: z.ZodType<Prisma.Pr
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   productId: z.lazy(() => SortOrderSchema).optional(),
+  companyId: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => ProductOptionCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => ProductOptionAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => ProductOptionMaxOrderByAggregateInputSchema).optional(),
@@ -958,6 +975,7 @@ export const ProductOptionScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   productId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  companyId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
 }).strict();
 
 export const PurchaseOrderWhereInputSchema: z.ZodType<Prisma.PurchaseOrderWhereInput> = z.object({
@@ -1309,6 +1327,7 @@ export const CompanyCreateInputSchema: z.ZodType<Prisma.CompanyCreateInput> = z.
   updatedAt: z.coerce.date().optional(),
   users: z.lazy(() => UserCreateNestedManyWithoutCompanyInputSchema).optional(),
   products: z.lazy(() => ProductCreateNestedManyWithoutCompanyInputSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionCreateNestedManyWithoutCompanyInputSchema).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderCreateNestedManyWithoutCompanyInputSchema).optional()
 }).strict();
 
@@ -1325,6 +1344,7 @@ export const CompanyUncheckedCreateInputSchema: z.ZodType<Prisma.CompanyUnchecke
   updatedAt: z.coerce.date().optional(),
   users: z.lazy(() => UserUncheckedCreateNestedManyWithoutCompanyInputSchema).optional(),
   products: z.lazy(() => ProductUncheckedCreateNestedManyWithoutCompanyInputSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionUncheckedCreateNestedManyWithoutCompanyInputSchema).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderUncheckedCreateNestedManyWithoutCompanyInputSchema).optional()
 }).strict();
 
@@ -1341,6 +1361,7 @@ export const CompanyUpdateInputSchema: z.ZodType<Prisma.CompanyUpdateInput> = z.
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   users: z.lazy(() => UserUpdateManyWithoutCompanyNestedInputSchema).optional(),
   products: z.lazy(() => ProductUpdateManyWithoutCompanyNestedInputSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionUpdateManyWithoutCompanyNestedInputSchema).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderUpdateManyWithoutCompanyNestedInputSchema).optional()
 }).strict();
 
@@ -1357,6 +1378,7 @@ export const CompanyUncheckedUpdateInputSchema: z.ZodType<Prisma.CompanyUnchecke
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   users: z.lazy(() => UserUncheckedUpdateManyWithoutCompanyNestedInputSchema).optional(),
   products: z.lazy(() => ProductUncheckedUpdateManyWithoutCompanyNestedInputSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionUncheckedUpdateManyWithoutCompanyNestedInputSchema).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderUncheckedUpdateManyWithoutCompanyNestedInputSchema).optional()
 }).strict();
 
@@ -1479,6 +1501,7 @@ export const ProductOptionCreateInputSchema: z.ZodType<Prisma.ProductOptionCreat
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   product: z.lazy(() => ProductCreateNestedOneWithoutOptionsInputSchema),
+  company: z.lazy(() => CompanyCreateNestedOneWithoutProductOptionsInputSchema),
   purchaseOrders: z.lazy(() => PurchaseOrderCreateNestedManyWithoutProductOptionInputSchema).optional()
 }).strict();
 
@@ -1496,6 +1519,7 @@ export const ProductOptionUncheckedCreateInputSchema: z.ZodType<Prisma.ProductOp
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   productId: z.string(),
+  companyId: z.string(),
   purchaseOrders: z.lazy(() => PurchaseOrderUncheckedCreateNestedManyWithoutProductOptionInputSchema).optional()
 }).strict();
 
@@ -1513,6 +1537,7 @@ export const ProductOptionUpdateInputSchema: z.ZodType<Prisma.ProductOptionUpdat
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   product: z.lazy(() => ProductUpdateOneRequiredWithoutOptionsNestedInputSchema).optional(),
+  company: z.lazy(() => CompanyUpdateOneRequiredWithoutProductOptionsNestedInputSchema).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderUpdateManyWithoutProductOptionNestedInputSchema).optional()
 }).strict();
 
@@ -1530,6 +1555,7 @@ export const ProductOptionUncheckedUpdateInputSchema: z.ZodType<Prisma.ProductOp
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   productId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  companyId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderUncheckedUpdateManyWithoutProductOptionNestedInputSchema).optional()
 }).strict();
 
@@ -1546,7 +1572,8 @@ export const ProductOptionCreateManyInputSchema: z.ZodType<Prisma.ProductOptionC
   location: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  productId: z.string()
+  productId: z.string(),
+  companyId: z.string()
 }).strict();
 
 export const ProductOptionUpdateManyMutationInputSchema: z.ZodType<Prisma.ProductOptionUpdateManyMutationInput> = z.object({
@@ -1578,6 +1605,7 @@ export const ProductOptionUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Produ
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   productId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  companyId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PurchaseOrderCreateInputSchema: z.ZodType<Prisma.PurchaseOrderCreateInput> = z.object({
@@ -1988,6 +2016,12 @@ export const ProductListRelationFilterSchema: z.ZodType<Prisma.ProductListRelati
   none: z.lazy(() => ProductWhereInputSchema).optional()
 }).strict();
 
+export const ProductOptionListRelationFilterSchema: z.ZodType<Prisma.ProductOptionListRelationFilter> = z.object({
+  every: z.lazy(() => ProductOptionWhereInputSchema).optional(),
+  some: z.lazy(() => ProductOptionWhereInputSchema).optional(),
+  none: z.lazy(() => ProductOptionWhereInputSchema).optional()
+}).strict();
+
 export const PurchaseOrderListRelationFilterSchema: z.ZodType<Prisma.PurchaseOrderListRelationFilter> = z.object({
   every: z.lazy(() => PurchaseOrderWhereInputSchema).optional(),
   some: z.lazy(() => PurchaseOrderWhereInputSchema).optional(),
@@ -1999,6 +2033,10 @@ export const UserOrderByRelationAggregateInputSchema: z.ZodType<Prisma.UserOrder
 }).strict();
 
 export const ProductOrderByRelationAggregateInputSchema: z.ZodType<Prisma.ProductOrderByRelationAggregateInput> = z.object({
+  _count: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const ProductOptionOrderByRelationAggregateInputSchema: z.ZodType<Prisma.ProductOptionOrderByRelationAggregateInput> = z.object({
   _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -2051,19 +2089,9 @@ export const CompanyMinOrderByAggregateInputSchema: z.ZodType<Prisma.CompanyMinO
   updatedAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const ProductOptionListRelationFilterSchema: z.ZodType<Prisma.ProductOptionListRelationFilter> = z.object({
-  every: z.lazy(() => ProductOptionWhereInputSchema).optional(),
-  some: z.lazy(() => ProductOptionWhereInputSchema).optional(),
-  none: z.lazy(() => ProductOptionWhereInputSchema).optional()
-}).strict();
-
 export const CompanyRelationFilterSchema: z.ZodType<Prisma.CompanyRelationFilter> = z.object({
   is: z.lazy(() => CompanyWhereInputSchema).optional(),
   isNot: z.lazy(() => CompanyWhereInputSchema).optional()
-}).strict();
-
-export const ProductOptionOrderByRelationAggregateInputSchema: z.ZodType<Prisma.ProductOptionOrderByRelationAggregateInput> = z.object({
-  _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const ProductOrderByRelevanceInputSchema: z.ZodType<Prisma.ProductOrderByRelevanceInput> = z.object({
@@ -2166,7 +2194,8 @@ export const ProductOptionCountOrderByAggregateInputSchema: z.ZodType<Prisma.Pro
   location: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  productId: z.lazy(() => SortOrderSchema).optional()
+  productId: z.lazy(() => SortOrderSchema).optional(),
+  companyId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const ProductOptionAvgOrderByAggregateInputSchema: z.ZodType<Prisma.ProductOptionAvgOrderByAggregateInput> = z.object({
@@ -2188,7 +2217,8 @@ export const ProductOptionMaxOrderByAggregateInputSchema: z.ZodType<Prisma.Produ
   location: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  productId: z.lazy(() => SortOrderSchema).optional()
+  productId: z.lazy(() => SortOrderSchema).optional(),
+  companyId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const ProductOptionMinOrderByAggregateInputSchema: z.ZodType<Prisma.ProductOptionMinOrderByAggregateInput> = z.object({
@@ -2204,7 +2234,8 @@ export const ProductOptionMinOrderByAggregateInputSchema: z.ZodType<Prisma.Produ
   location: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  productId: z.lazy(() => SortOrderSchema).optional()
+  productId: z.lazy(() => SortOrderSchema).optional(),
+  companyId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const ProductOptionSumOrderByAggregateInputSchema: z.ZodType<Prisma.ProductOptionSumOrderByAggregateInput> = z.object({
@@ -2512,6 +2543,13 @@ export const ProductCreateNestedManyWithoutCompanyInputSchema: z.ZodType<Prisma.
   connect: z.union([ z.lazy(() => ProductWhereUniqueInputSchema),z.lazy(() => ProductWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
+export const ProductOptionCreateNestedManyWithoutCompanyInputSchema: z.ZodType<Prisma.ProductOptionCreateNestedManyWithoutCompanyInput> = z.object({
+  create: z.union([ z.lazy(() => ProductOptionCreateWithoutCompanyInputSchema),z.lazy(() => ProductOptionCreateWithoutCompanyInputSchema).array(),z.lazy(() => ProductOptionUncheckedCreateWithoutCompanyInputSchema),z.lazy(() => ProductOptionUncheckedCreateWithoutCompanyInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ProductOptionCreateOrConnectWithoutCompanyInputSchema),z.lazy(() => ProductOptionCreateOrConnectWithoutCompanyInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ProductOptionCreateManyCompanyInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => ProductOptionWhereUniqueInputSchema),z.lazy(() => ProductOptionWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
 export const PurchaseOrderCreateNestedManyWithoutCompanyInputSchema: z.ZodType<Prisma.PurchaseOrderCreateNestedManyWithoutCompanyInput> = z.object({
   create: z.union([ z.lazy(() => PurchaseOrderCreateWithoutCompanyInputSchema),z.lazy(() => PurchaseOrderCreateWithoutCompanyInputSchema).array(),z.lazy(() => PurchaseOrderUncheckedCreateWithoutCompanyInputSchema),z.lazy(() => PurchaseOrderUncheckedCreateWithoutCompanyInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => PurchaseOrderCreateOrConnectWithoutCompanyInputSchema),z.lazy(() => PurchaseOrderCreateOrConnectWithoutCompanyInputSchema).array() ]).optional(),
@@ -2531,6 +2569,13 @@ export const ProductUncheckedCreateNestedManyWithoutCompanyInputSchema: z.ZodTyp
   connectOrCreate: z.union([ z.lazy(() => ProductCreateOrConnectWithoutCompanyInputSchema),z.lazy(() => ProductCreateOrConnectWithoutCompanyInputSchema).array() ]).optional(),
   createMany: z.lazy(() => ProductCreateManyCompanyInputEnvelopeSchema).optional(),
   connect: z.union([ z.lazy(() => ProductWhereUniqueInputSchema),z.lazy(() => ProductWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const ProductOptionUncheckedCreateNestedManyWithoutCompanyInputSchema: z.ZodType<Prisma.ProductOptionUncheckedCreateNestedManyWithoutCompanyInput> = z.object({
+  create: z.union([ z.lazy(() => ProductOptionCreateWithoutCompanyInputSchema),z.lazy(() => ProductOptionCreateWithoutCompanyInputSchema).array(),z.lazy(() => ProductOptionUncheckedCreateWithoutCompanyInputSchema),z.lazy(() => ProductOptionUncheckedCreateWithoutCompanyInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ProductOptionCreateOrConnectWithoutCompanyInputSchema),z.lazy(() => ProductOptionCreateOrConnectWithoutCompanyInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ProductOptionCreateManyCompanyInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => ProductOptionWhereUniqueInputSchema),z.lazy(() => ProductOptionWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const PurchaseOrderUncheckedCreateNestedManyWithoutCompanyInputSchema: z.ZodType<Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCompanyInput> = z.object({
@@ -2566,6 +2611,20 @@ export const ProductUpdateManyWithoutCompanyNestedInputSchema: z.ZodType<Prisma.
   update: z.union([ z.lazy(() => ProductUpdateWithWhereUniqueWithoutCompanyInputSchema),z.lazy(() => ProductUpdateWithWhereUniqueWithoutCompanyInputSchema).array() ]).optional(),
   updateMany: z.union([ z.lazy(() => ProductUpdateManyWithWhereWithoutCompanyInputSchema),z.lazy(() => ProductUpdateManyWithWhereWithoutCompanyInputSchema).array() ]).optional(),
   deleteMany: z.union([ z.lazy(() => ProductScalarWhereInputSchema),z.lazy(() => ProductScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const ProductOptionUpdateManyWithoutCompanyNestedInputSchema: z.ZodType<Prisma.ProductOptionUpdateManyWithoutCompanyNestedInput> = z.object({
+  create: z.union([ z.lazy(() => ProductOptionCreateWithoutCompanyInputSchema),z.lazy(() => ProductOptionCreateWithoutCompanyInputSchema).array(),z.lazy(() => ProductOptionUncheckedCreateWithoutCompanyInputSchema),z.lazy(() => ProductOptionUncheckedCreateWithoutCompanyInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ProductOptionCreateOrConnectWithoutCompanyInputSchema),z.lazy(() => ProductOptionCreateOrConnectWithoutCompanyInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => ProductOptionUpsertWithWhereUniqueWithoutCompanyInputSchema),z.lazy(() => ProductOptionUpsertWithWhereUniqueWithoutCompanyInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ProductOptionCreateManyCompanyInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => ProductOptionWhereUniqueInputSchema),z.lazy(() => ProductOptionWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => ProductOptionWhereUniqueInputSchema),z.lazy(() => ProductOptionWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => ProductOptionWhereUniqueInputSchema),z.lazy(() => ProductOptionWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => ProductOptionWhereUniqueInputSchema),z.lazy(() => ProductOptionWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => ProductOptionUpdateWithWhereUniqueWithoutCompanyInputSchema),z.lazy(() => ProductOptionUpdateWithWhereUniqueWithoutCompanyInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => ProductOptionUpdateManyWithWhereWithoutCompanyInputSchema),z.lazy(() => ProductOptionUpdateManyWithWhereWithoutCompanyInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => ProductOptionScalarWhereInputSchema),z.lazy(() => ProductOptionScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
 export const PurchaseOrderUpdateManyWithoutCompanyNestedInputSchema: z.ZodType<Prisma.PurchaseOrderUpdateManyWithoutCompanyNestedInput> = z.object({
@@ -2608,6 +2667,20 @@ export const ProductUncheckedUpdateManyWithoutCompanyNestedInputSchema: z.ZodTyp
   update: z.union([ z.lazy(() => ProductUpdateWithWhereUniqueWithoutCompanyInputSchema),z.lazy(() => ProductUpdateWithWhereUniqueWithoutCompanyInputSchema).array() ]).optional(),
   updateMany: z.union([ z.lazy(() => ProductUpdateManyWithWhereWithoutCompanyInputSchema),z.lazy(() => ProductUpdateManyWithWhereWithoutCompanyInputSchema).array() ]).optional(),
   deleteMany: z.union([ z.lazy(() => ProductScalarWhereInputSchema),z.lazy(() => ProductScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const ProductOptionUncheckedUpdateManyWithoutCompanyNestedInputSchema: z.ZodType<Prisma.ProductOptionUncheckedUpdateManyWithoutCompanyNestedInput> = z.object({
+  create: z.union([ z.lazy(() => ProductOptionCreateWithoutCompanyInputSchema),z.lazy(() => ProductOptionCreateWithoutCompanyInputSchema).array(),z.lazy(() => ProductOptionUncheckedCreateWithoutCompanyInputSchema),z.lazy(() => ProductOptionUncheckedCreateWithoutCompanyInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ProductOptionCreateOrConnectWithoutCompanyInputSchema),z.lazy(() => ProductOptionCreateOrConnectWithoutCompanyInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => ProductOptionUpsertWithWhereUniqueWithoutCompanyInputSchema),z.lazy(() => ProductOptionUpsertWithWhereUniqueWithoutCompanyInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ProductOptionCreateManyCompanyInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => ProductOptionWhereUniqueInputSchema),z.lazy(() => ProductOptionWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => ProductOptionWhereUniqueInputSchema),z.lazy(() => ProductOptionWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => ProductOptionWhereUniqueInputSchema),z.lazy(() => ProductOptionWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => ProductOptionWhereUniqueInputSchema),z.lazy(() => ProductOptionWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => ProductOptionUpdateWithWhereUniqueWithoutCompanyInputSchema),z.lazy(() => ProductOptionUpdateWithWhereUniqueWithoutCompanyInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => ProductOptionUpdateManyWithWhereWithoutCompanyInputSchema),z.lazy(() => ProductOptionUpdateManyWithWhereWithoutCompanyInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => ProductOptionScalarWhereInputSchema),z.lazy(() => ProductOptionScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
 export const PurchaseOrderUncheckedUpdateManyWithoutCompanyNestedInputSchema: z.ZodType<Prisma.PurchaseOrderUncheckedUpdateManyWithoutCompanyNestedInput> = z.object({
@@ -2686,6 +2759,12 @@ export const ProductCreateNestedOneWithoutOptionsInputSchema: z.ZodType<Prisma.P
   connect: z.lazy(() => ProductWhereUniqueInputSchema).optional()
 }).strict();
 
+export const CompanyCreateNestedOneWithoutProductOptionsInputSchema: z.ZodType<Prisma.CompanyCreateNestedOneWithoutProductOptionsInput> = z.object({
+  create: z.union([ z.lazy(() => CompanyCreateWithoutProductOptionsInputSchema),z.lazy(() => CompanyUncheckedCreateWithoutProductOptionsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => CompanyCreateOrConnectWithoutProductOptionsInputSchema).optional(),
+  connect: z.lazy(() => CompanyWhereUniqueInputSchema).optional()
+}).strict();
+
 export const PurchaseOrderCreateNestedManyWithoutProductOptionInputSchema: z.ZodType<Prisma.PurchaseOrderCreateNestedManyWithoutProductOptionInput> = z.object({
   create: z.union([ z.lazy(() => PurchaseOrderCreateWithoutProductOptionInputSchema),z.lazy(() => PurchaseOrderCreateWithoutProductOptionInputSchema).array(),z.lazy(() => PurchaseOrderUncheckedCreateWithoutProductOptionInputSchema),z.lazy(() => PurchaseOrderUncheckedCreateWithoutProductOptionInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => PurchaseOrderCreateOrConnectWithoutProductOptionInputSchema),z.lazy(() => PurchaseOrderCreateOrConnectWithoutProductOptionInputSchema).array() ]).optional(),
@@ -2734,6 +2813,14 @@ export const ProductUpdateOneRequiredWithoutOptionsNestedInputSchema: z.ZodType<
   upsert: z.lazy(() => ProductUpsertWithoutOptionsInputSchema).optional(),
   connect: z.lazy(() => ProductWhereUniqueInputSchema).optional(),
   update: z.union([ z.lazy(() => ProductUpdateToOneWithWhereWithoutOptionsInputSchema),z.lazy(() => ProductUpdateWithoutOptionsInputSchema),z.lazy(() => ProductUncheckedUpdateWithoutOptionsInputSchema) ]).optional(),
+}).strict();
+
+export const CompanyUpdateOneRequiredWithoutProductOptionsNestedInputSchema: z.ZodType<Prisma.CompanyUpdateOneRequiredWithoutProductOptionsNestedInput> = z.object({
+  create: z.union([ z.lazy(() => CompanyCreateWithoutProductOptionsInputSchema),z.lazy(() => CompanyUncheckedCreateWithoutProductOptionsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => CompanyCreateOrConnectWithoutProductOptionsInputSchema).optional(),
+  upsert: z.lazy(() => CompanyUpsertWithoutProductOptionsInputSchema).optional(),
+  connect: z.lazy(() => CompanyWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => CompanyUpdateToOneWithWhereWithoutProductOptionsInputSchema),z.lazy(() => CompanyUpdateWithoutProductOptionsInputSchema),z.lazy(() => CompanyUncheckedUpdateWithoutProductOptionsInputSchema) ]).optional(),
 }).strict();
 
 export const PurchaseOrderUpdateManyWithoutProductOptionNestedInputSchema: z.ZodType<Prisma.PurchaseOrderUpdateManyWithoutProductOptionNestedInput> = z.object({
@@ -3084,6 +3171,7 @@ export const CompanyCreateWithoutUsersInputSchema: z.ZodType<Prisma.CompanyCreat
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   products: z.lazy(() => ProductCreateNestedManyWithoutCompanyInputSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionCreateNestedManyWithoutCompanyInputSchema).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderCreateNestedManyWithoutCompanyInputSchema).optional()
 }).strict();
 
@@ -3099,6 +3187,7 @@ export const CompanyUncheckedCreateWithoutUsersInputSchema: z.ZodType<Prisma.Com
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   products: z.lazy(() => ProductUncheckedCreateNestedManyWithoutCompanyInputSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionUncheckedCreateNestedManyWithoutCompanyInputSchema).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderUncheckedCreateNestedManyWithoutCompanyInputSchema).optional()
 }).strict();
 
@@ -3194,6 +3283,7 @@ export const CompanyUpdateWithoutUsersInputSchema: z.ZodType<Prisma.CompanyUpdat
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   products: z.lazy(() => ProductUpdateManyWithoutCompanyNestedInputSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionUpdateManyWithoutCompanyNestedInputSchema).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderUpdateManyWithoutCompanyNestedInputSchema).optional()
 }).strict();
 
@@ -3209,6 +3299,7 @@ export const CompanyUncheckedUpdateWithoutUsersInputSchema: z.ZodType<Prisma.Com
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   products: z.lazy(() => ProductUncheckedUpdateManyWithoutCompanyNestedInputSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionUncheckedUpdateManyWithoutCompanyNestedInputSchema).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderUncheckedUpdateManyWithoutCompanyNestedInputSchema).optional()
 }).strict();
 
@@ -3474,6 +3565,50 @@ export const ProductCreateManyCompanyInputEnvelopeSchema: z.ZodType<Prisma.Produ
   skipDuplicates: z.boolean().optional()
 }).strict();
 
+export const ProductOptionCreateWithoutCompanyInputSchema: z.ZodType<Prisma.ProductOptionCreateWithoutCompanyInput> = z.object({
+  id: z.string().cuid().optional(),
+  name: z.string(),
+  imageUrl: z.string().optional().nullable(),
+  unitPrice: z.number().optional(),
+  currency: z.lazy(() => CurrencySchema).optional(),
+  importedFrom: z.lazy(() => CountrySchema).optional(),
+  inventoryQuantity: z.number().int().optional(),
+  leadtime: z.number().int().optional(),
+  status: z.lazy(() => ProductOptionStatusSchema).optional(),
+  location: z.string().optional().nullable(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  product: z.lazy(() => ProductCreateNestedOneWithoutOptionsInputSchema),
+  purchaseOrders: z.lazy(() => PurchaseOrderCreateNestedManyWithoutProductOptionInputSchema).optional()
+}).strict();
+
+export const ProductOptionUncheckedCreateWithoutCompanyInputSchema: z.ZodType<Prisma.ProductOptionUncheckedCreateWithoutCompanyInput> = z.object({
+  id: z.string().cuid().optional(),
+  name: z.string(),
+  imageUrl: z.string().optional().nullable(),
+  unitPrice: z.number().optional(),
+  currency: z.lazy(() => CurrencySchema).optional(),
+  importedFrom: z.lazy(() => CountrySchema).optional(),
+  inventoryQuantity: z.number().int().optional(),
+  leadtime: z.number().int().optional(),
+  status: z.lazy(() => ProductOptionStatusSchema).optional(),
+  location: z.string().optional().nullable(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  productId: z.string(),
+  purchaseOrders: z.lazy(() => PurchaseOrderUncheckedCreateNestedManyWithoutProductOptionInputSchema).optional()
+}).strict();
+
+export const ProductOptionCreateOrConnectWithoutCompanyInputSchema: z.ZodType<Prisma.ProductOptionCreateOrConnectWithoutCompanyInput> = z.object({
+  where: z.lazy(() => ProductOptionWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => ProductOptionCreateWithoutCompanyInputSchema),z.lazy(() => ProductOptionUncheckedCreateWithoutCompanyInputSchema) ]),
+}).strict();
+
+export const ProductOptionCreateManyCompanyInputEnvelopeSchema: z.ZodType<Prisma.ProductOptionCreateManyCompanyInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => ProductOptionCreateManyCompanyInputSchema),z.lazy(() => ProductOptionCreateManyCompanyInputSchema).array() ]),
+  skipDuplicates: z.boolean().optional()
+}).strict();
+
 export const PurchaseOrderCreateWithoutCompanyInputSchema: z.ZodType<Prisma.PurchaseOrderCreateWithoutCompanyInput> = z.object({
   id: z.string().cuid().optional(),
   orderedQuantity: z.number().int().optional(),
@@ -3563,6 +3698,42 @@ export const ProductScalarWhereInputSchema: z.ZodType<Prisma.ProductScalarWhereI
   companyId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
 }).strict();
 
+export const ProductOptionUpsertWithWhereUniqueWithoutCompanyInputSchema: z.ZodType<Prisma.ProductOptionUpsertWithWhereUniqueWithoutCompanyInput> = z.object({
+  where: z.lazy(() => ProductOptionWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => ProductOptionUpdateWithoutCompanyInputSchema),z.lazy(() => ProductOptionUncheckedUpdateWithoutCompanyInputSchema) ]),
+  create: z.union([ z.lazy(() => ProductOptionCreateWithoutCompanyInputSchema),z.lazy(() => ProductOptionUncheckedCreateWithoutCompanyInputSchema) ]),
+}).strict();
+
+export const ProductOptionUpdateWithWhereUniqueWithoutCompanyInputSchema: z.ZodType<Prisma.ProductOptionUpdateWithWhereUniqueWithoutCompanyInput> = z.object({
+  where: z.lazy(() => ProductOptionWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => ProductOptionUpdateWithoutCompanyInputSchema),z.lazy(() => ProductOptionUncheckedUpdateWithoutCompanyInputSchema) ]),
+}).strict();
+
+export const ProductOptionUpdateManyWithWhereWithoutCompanyInputSchema: z.ZodType<Prisma.ProductOptionUpdateManyWithWhereWithoutCompanyInput> = z.object({
+  where: z.lazy(() => ProductOptionScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => ProductOptionUpdateManyMutationInputSchema),z.lazy(() => ProductOptionUncheckedUpdateManyWithoutCompanyInputSchema) ]),
+}).strict();
+
+export const ProductOptionScalarWhereInputSchema: z.ZodType<Prisma.ProductOptionScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => ProductOptionScalarWhereInputSchema),z.lazy(() => ProductOptionScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ProductOptionScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ProductOptionScalarWhereInputSchema),z.lazy(() => ProductOptionScalarWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  imageUrl: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  unitPrice: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
+  currency: z.union([ z.lazy(() => EnumCurrencyFilterSchema),z.lazy(() => CurrencySchema) ]).optional(),
+  importedFrom: z.union([ z.lazy(() => EnumCountryFilterSchema),z.lazy(() => CountrySchema) ]).optional(),
+  inventoryQuantity: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  leadtime: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  status: z.union([ z.lazy(() => EnumProductOptionStatusFilterSchema),z.lazy(() => ProductOptionStatusSchema) ]).optional(),
+  location: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  productId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  companyId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+}).strict();
+
 export const PurchaseOrderUpsertWithWhereUniqueWithoutCompanyInputSchema: z.ZodType<Prisma.PurchaseOrderUpsertWithWhereUniqueWithoutCompanyInput> = z.object({
   where: z.lazy(() => PurchaseOrderWhereUniqueInputSchema),
   update: z.union([ z.lazy(() => PurchaseOrderUpdateWithoutCompanyInputSchema),z.lazy(() => PurchaseOrderUncheckedUpdateWithoutCompanyInputSchema) ]),
@@ -3606,6 +3777,7 @@ export const ProductOptionCreateWithoutProductInputSchema: z.ZodType<Prisma.Prod
   location: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  company: z.lazy(() => CompanyCreateNestedOneWithoutProductOptionsInputSchema),
   purchaseOrders: z.lazy(() => PurchaseOrderCreateNestedManyWithoutProductOptionInputSchema).optional()
 }).strict();
 
@@ -3622,6 +3794,7 @@ export const ProductOptionUncheckedCreateWithoutProductInputSchema: z.ZodType<Pr
   location: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+  companyId: z.string(),
   purchaseOrders: z.lazy(() => PurchaseOrderUncheckedCreateNestedManyWithoutProductOptionInputSchema).optional()
 }).strict();
 
@@ -3647,6 +3820,7 @@ export const CompanyCreateWithoutProductsInputSchema: z.ZodType<Prisma.CompanyCr
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   users: z.lazy(() => UserCreateNestedManyWithoutCompanyInputSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionCreateNestedManyWithoutCompanyInputSchema).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderCreateNestedManyWithoutCompanyInputSchema).optional()
 }).strict();
 
@@ -3662,6 +3836,7 @@ export const CompanyUncheckedCreateWithoutProductsInputSchema: z.ZodType<Prisma.
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   users: z.lazy(() => UserUncheckedCreateNestedManyWithoutCompanyInputSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionUncheckedCreateNestedManyWithoutCompanyInputSchema).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderUncheckedCreateNestedManyWithoutCompanyInputSchema).optional()
 }).strict();
 
@@ -3684,25 +3859,6 @@ export const ProductOptionUpdateWithWhereUniqueWithoutProductInputSchema: z.ZodT
 export const ProductOptionUpdateManyWithWhereWithoutProductInputSchema: z.ZodType<Prisma.ProductOptionUpdateManyWithWhereWithoutProductInput> = z.object({
   where: z.lazy(() => ProductOptionScalarWhereInputSchema),
   data: z.union([ z.lazy(() => ProductOptionUpdateManyMutationInputSchema),z.lazy(() => ProductOptionUncheckedUpdateManyWithoutProductInputSchema) ]),
-}).strict();
-
-export const ProductOptionScalarWhereInputSchema: z.ZodType<Prisma.ProductOptionScalarWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => ProductOptionScalarWhereInputSchema),z.lazy(() => ProductOptionScalarWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => ProductOptionScalarWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => ProductOptionScalarWhereInputSchema),z.lazy(() => ProductOptionScalarWhereInputSchema).array() ]).optional(),
-  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  imageUrl: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  unitPrice: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
-  currency: z.union([ z.lazy(() => EnumCurrencyFilterSchema),z.lazy(() => CurrencySchema) ]).optional(),
-  importedFrom: z.union([ z.lazy(() => EnumCountryFilterSchema),z.lazy(() => CountrySchema) ]).optional(),
-  inventoryQuantity: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  leadtime: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  status: z.union([ z.lazy(() => EnumProductOptionStatusFilterSchema),z.lazy(() => ProductOptionStatusSchema) ]).optional(),
-  location: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  productId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
 }).strict();
 
 export const CompanyUpsertWithoutProductsInputSchema: z.ZodType<Prisma.CompanyUpsertWithoutProductsInput> = z.object({
@@ -3728,6 +3884,7 @@ export const CompanyUpdateWithoutProductsInputSchema: z.ZodType<Prisma.CompanyUp
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   users: z.lazy(() => UserUpdateManyWithoutCompanyNestedInputSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionUpdateManyWithoutCompanyNestedInputSchema).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderUpdateManyWithoutCompanyNestedInputSchema).optional()
 }).strict();
 
@@ -3743,6 +3900,7 @@ export const CompanyUncheckedUpdateWithoutProductsInputSchema: z.ZodType<Prisma.
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   users: z.lazy(() => UserUncheckedUpdateManyWithoutCompanyNestedInputSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionUncheckedUpdateManyWithoutCompanyNestedInputSchema).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderUncheckedUpdateManyWithoutCompanyNestedInputSchema).optional()
 }).strict();
 
@@ -3767,6 +3925,43 @@ export const ProductUncheckedCreateWithoutOptionsInputSchema: z.ZodType<Prisma.P
 export const ProductCreateOrConnectWithoutOptionsInputSchema: z.ZodType<Prisma.ProductCreateOrConnectWithoutOptionsInput> = z.object({
   where: z.lazy(() => ProductWhereUniqueInputSchema),
   create: z.union([ z.lazy(() => ProductCreateWithoutOptionsInputSchema),z.lazy(() => ProductUncheckedCreateWithoutOptionsInputSchema) ]),
+}).strict();
+
+export const CompanyCreateWithoutProductOptionsInputSchema: z.ZodType<Prisma.CompanyCreateWithoutProductOptionsInput> = z.object({
+  id: z.string().cuid().optional(),
+  crn: z.string(),
+  name: z.string(),
+  phone: z.string().optional().nullable(),
+  registeredAt: z.coerce.date().optional().nullable(),
+  repName: z.string(),
+  repMobile: z.string(),
+  certificateUrl: z.string().optional().nullable(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  users: z.lazy(() => UserCreateNestedManyWithoutCompanyInputSchema).optional(),
+  products: z.lazy(() => ProductCreateNestedManyWithoutCompanyInputSchema).optional(),
+  purchaseOrders: z.lazy(() => PurchaseOrderCreateNestedManyWithoutCompanyInputSchema).optional()
+}).strict();
+
+export const CompanyUncheckedCreateWithoutProductOptionsInputSchema: z.ZodType<Prisma.CompanyUncheckedCreateWithoutProductOptionsInput> = z.object({
+  id: z.string().cuid().optional(),
+  crn: z.string(),
+  name: z.string(),
+  phone: z.string().optional().nullable(),
+  registeredAt: z.coerce.date().optional().nullable(),
+  repName: z.string(),
+  repMobile: z.string(),
+  certificateUrl: z.string().optional().nullable(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  users: z.lazy(() => UserUncheckedCreateNestedManyWithoutCompanyInputSchema).optional(),
+  products: z.lazy(() => ProductUncheckedCreateNestedManyWithoutCompanyInputSchema).optional(),
+  purchaseOrders: z.lazy(() => PurchaseOrderUncheckedCreateNestedManyWithoutCompanyInputSchema).optional()
+}).strict();
+
+export const CompanyCreateOrConnectWithoutProductOptionsInputSchema: z.ZodType<Prisma.CompanyCreateOrConnectWithoutProductOptionsInput> = z.object({
+  where: z.lazy(() => CompanyWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => CompanyCreateWithoutProductOptionsInputSchema),z.lazy(() => CompanyUncheckedCreateWithoutProductOptionsInputSchema) ]),
 }).strict();
 
 export const PurchaseOrderCreateWithoutProductOptionInputSchema: z.ZodType<Prisma.PurchaseOrderCreateWithoutProductOptionInput> = z.object({
@@ -3828,6 +4023,49 @@ export const ProductUncheckedUpdateWithoutOptionsInputSchema: z.ZodType<Prisma.P
   companyId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
+export const CompanyUpsertWithoutProductOptionsInputSchema: z.ZodType<Prisma.CompanyUpsertWithoutProductOptionsInput> = z.object({
+  update: z.union([ z.lazy(() => CompanyUpdateWithoutProductOptionsInputSchema),z.lazy(() => CompanyUncheckedUpdateWithoutProductOptionsInputSchema) ]),
+  create: z.union([ z.lazy(() => CompanyCreateWithoutProductOptionsInputSchema),z.lazy(() => CompanyUncheckedCreateWithoutProductOptionsInputSchema) ]),
+  where: z.lazy(() => CompanyWhereInputSchema).optional()
+}).strict();
+
+export const CompanyUpdateToOneWithWhereWithoutProductOptionsInputSchema: z.ZodType<Prisma.CompanyUpdateToOneWithWhereWithoutProductOptionsInput> = z.object({
+  where: z.lazy(() => CompanyWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => CompanyUpdateWithoutProductOptionsInputSchema),z.lazy(() => CompanyUncheckedUpdateWithoutProductOptionsInputSchema) ]),
+}).strict();
+
+export const CompanyUpdateWithoutProductOptionsInputSchema: z.ZodType<Prisma.CompanyUpdateWithoutProductOptionsInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  crn: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  phone: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  registeredAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  repName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  repMobile: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  certificateUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  users: z.lazy(() => UserUpdateManyWithoutCompanyNestedInputSchema).optional(),
+  products: z.lazy(() => ProductUpdateManyWithoutCompanyNestedInputSchema).optional(),
+  purchaseOrders: z.lazy(() => PurchaseOrderUpdateManyWithoutCompanyNestedInputSchema).optional()
+}).strict();
+
+export const CompanyUncheckedUpdateWithoutProductOptionsInputSchema: z.ZodType<Prisma.CompanyUncheckedUpdateWithoutProductOptionsInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  crn: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  phone: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  registeredAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  repName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  repMobile: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  certificateUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  users: z.lazy(() => UserUncheckedUpdateManyWithoutCompanyNestedInputSchema).optional(),
+  products: z.lazy(() => ProductUncheckedUpdateManyWithoutCompanyNestedInputSchema).optional(),
+  purchaseOrders: z.lazy(() => PurchaseOrderUncheckedUpdateManyWithoutCompanyNestedInputSchema).optional()
+}).strict();
+
 export const PurchaseOrderUpsertWithWhereUniqueWithoutProductOptionInputSchema: z.ZodType<Prisma.PurchaseOrderUpsertWithWhereUniqueWithoutProductOptionInput> = z.object({
   where: z.lazy(() => PurchaseOrderWhereUniqueInputSchema),
   update: z.union([ z.lazy(() => PurchaseOrderUpdateWithoutProductOptionInputSchema),z.lazy(() => PurchaseOrderUncheckedUpdateWithoutProductOptionInputSchema) ]),
@@ -3857,7 +4095,8 @@ export const ProductOptionCreateWithoutPurchaseOrdersInputSchema: z.ZodType<Pris
   location: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  product: z.lazy(() => ProductCreateNestedOneWithoutOptionsInputSchema)
+  product: z.lazy(() => ProductCreateNestedOneWithoutOptionsInputSchema),
+  company: z.lazy(() => CompanyCreateNestedOneWithoutProductOptionsInputSchema)
 }).strict();
 
 export const ProductOptionUncheckedCreateWithoutPurchaseOrdersInputSchema: z.ZodType<Prisma.ProductOptionUncheckedCreateWithoutPurchaseOrdersInput> = z.object({
@@ -3873,7 +4112,8 @@ export const ProductOptionUncheckedCreateWithoutPurchaseOrdersInputSchema: z.Zod
   location: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  productId: z.string()
+  productId: z.string(),
+  companyId: z.string()
 }).strict();
 
 export const ProductOptionCreateOrConnectWithoutPurchaseOrdersInputSchema: z.ZodType<Prisma.ProductOptionCreateOrConnectWithoutPurchaseOrdersInput> = z.object({
@@ -3893,7 +4133,8 @@ export const CompanyCreateWithoutPurchaseOrdersInputSchema: z.ZodType<Prisma.Com
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   users: z.lazy(() => UserCreateNestedManyWithoutCompanyInputSchema).optional(),
-  products: z.lazy(() => ProductCreateNestedManyWithoutCompanyInputSchema).optional()
+  products: z.lazy(() => ProductCreateNestedManyWithoutCompanyInputSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionCreateNestedManyWithoutCompanyInputSchema).optional()
 }).strict();
 
 export const CompanyUncheckedCreateWithoutPurchaseOrdersInputSchema: z.ZodType<Prisma.CompanyUncheckedCreateWithoutPurchaseOrdersInput> = z.object({
@@ -3908,7 +4149,8 @@ export const CompanyUncheckedCreateWithoutPurchaseOrdersInputSchema: z.ZodType<P
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   users: z.lazy(() => UserUncheckedCreateNestedManyWithoutCompanyInputSchema).optional(),
-  products: z.lazy(() => ProductUncheckedCreateNestedManyWithoutCompanyInputSchema).optional()
+  products: z.lazy(() => ProductUncheckedCreateNestedManyWithoutCompanyInputSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionUncheckedCreateNestedManyWithoutCompanyInputSchema).optional()
 }).strict();
 
 export const CompanyCreateOrConnectWithoutPurchaseOrdersInputSchema: z.ZodType<Prisma.CompanyCreateOrConnectWithoutPurchaseOrdersInput> = z.object({
@@ -3940,7 +4182,8 @@ export const ProductOptionUpdateWithoutPurchaseOrdersInputSchema: z.ZodType<Pris
   location: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  product: z.lazy(() => ProductUpdateOneRequiredWithoutOptionsNestedInputSchema).optional()
+  product: z.lazy(() => ProductUpdateOneRequiredWithoutOptionsNestedInputSchema).optional(),
+  company: z.lazy(() => CompanyUpdateOneRequiredWithoutProductOptionsNestedInputSchema).optional()
 }).strict();
 
 export const ProductOptionUncheckedUpdateWithoutPurchaseOrdersInputSchema: z.ZodType<Prisma.ProductOptionUncheckedUpdateWithoutPurchaseOrdersInput> = z.object({
@@ -3957,6 +4200,7 @@ export const ProductOptionUncheckedUpdateWithoutPurchaseOrdersInputSchema: z.Zod
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   productId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  companyId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const CompanyUpsertWithoutPurchaseOrdersInputSchema: z.ZodType<Prisma.CompanyUpsertWithoutPurchaseOrdersInput> = z.object({
@@ -3982,7 +4226,8 @@ export const CompanyUpdateWithoutPurchaseOrdersInputSchema: z.ZodType<Prisma.Com
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   users: z.lazy(() => UserUpdateManyWithoutCompanyNestedInputSchema).optional(),
-  products: z.lazy(() => ProductUpdateManyWithoutCompanyNestedInputSchema).optional()
+  products: z.lazy(() => ProductUpdateManyWithoutCompanyNestedInputSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionUpdateManyWithoutCompanyNestedInputSchema).optional()
 }).strict();
 
 export const CompanyUncheckedUpdateWithoutPurchaseOrdersInputSchema: z.ZodType<Prisma.CompanyUncheckedUpdateWithoutPurchaseOrdersInput> = z.object({
@@ -3997,7 +4242,8 @@ export const CompanyUncheckedUpdateWithoutPurchaseOrdersInputSchema: z.ZodType<P
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   users: z.lazy(() => UserUncheckedUpdateManyWithoutCompanyNestedInputSchema).optional(),
-  products: z.lazy(() => ProductUncheckedUpdateManyWithoutCompanyNestedInputSchema).optional()
+  products: z.lazy(() => ProductUncheckedUpdateManyWithoutCompanyNestedInputSchema).optional(),
+  productOptions: z.lazy(() => ProductOptionUncheckedUpdateManyWithoutCompanyNestedInputSchema).optional()
 }).strict();
 
 export const AccountCreateManyUserInputSchema: z.ZodType<Prisma.AccountCreateManyUserInput> = z.object({
@@ -4107,6 +4353,22 @@ export const ProductCreateManyCompanyInputSchema: z.ZodType<Prisma.ProductCreate
   updatedAt: z.coerce.date().optional()
 }).strict();
 
+export const ProductOptionCreateManyCompanyInputSchema: z.ZodType<Prisma.ProductOptionCreateManyCompanyInput> = z.object({
+  id: z.string().cuid().optional(),
+  name: z.string(),
+  imageUrl: z.string().optional().nullable(),
+  unitPrice: z.number().optional(),
+  currency: z.lazy(() => CurrencySchema).optional(),
+  importedFrom: z.lazy(() => CountrySchema).optional(),
+  inventoryQuantity: z.number().int().optional(),
+  leadtime: z.number().int().optional(),
+  status: z.lazy(() => ProductOptionStatusSchema).optional(),
+  location: z.string().optional().nullable(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  productId: z.string()
+}).strict();
+
 export const PurchaseOrderCreateManyCompanyInputSchema: z.ZodType<Prisma.PurchaseOrderCreateManyCompanyInput> = z.object({
   id: z.string().cuid().optional(),
   orderedQuantity: z.number().int().optional(),
@@ -4180,6 +4442,56 @@ export const ProductUncheckedUpdateManyWithoutCompanyInputSchema: z.ZodType<Pris
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
+export const ProductOptionUpdateWithoutCompanyInputSchema: z.ZodType<Prisma.ProductOptionUpdateWithoutCompanyInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  imageUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  unitPrice: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  currency: z.union([ z.lazy(() => CurrencySchema),z.lazy(() => EnumCurrencyFieldUpdateOperationsInputSchema) ]).optional(),
+  importedFrom: z.union([ z.lazy(() => CountrySchema),z.lazy(() => EnumCountryFieldUpdateOperationsInputSchema) ]).optional(),
+  inventoryQuantity: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  leadtime: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => ProductOptionStatusSchema),z.lazy(() => EnumProductOptionStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  location: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  product: z.lazy(() => ProductUpdateOneRequiredWithoutOptionsNestedInputSchema).optional(),
+  purchaseOrders: z.lazy(() => PurchaseOrderUpdateManyWithoutProductOptionNestedInputSchema).optional()
+}).strict();
+
+export const ProductOptionUncheckedUpdateWithoutCompanyInputSchema: z.ZodType<Prisma.ProductOptionUncheckedUpdateWithoutCompanyInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  imageUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  unitPrice: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  currency: z.union([ z.lazy(() => CurrencySchema),z.lazy(() => EnumCurrencyFieldUpdateOperationsInputSchema) ]).optional(),
+  importedFrom: z.union([ z.lazy(() => CountrySchema),z.lazy(() => EnumCountryFieldUpdateOperationsInputSchema) ]).optional(),
+  inventoryQuantity: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  leadtime: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => ProductOptionStatusSchema),z.lazy(() => EnumProductOptionStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  location: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  productId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  purchaseOrders: z.lazy(() => PurchaseOrderUncheckedUpdateManyWithoutProductOptionNestedInputSchema).optional()
+}).strict();
+
+export const ProductOptionUncheckedUpdateManyWithoutCompanyInputSchema: z.ZodType<Prisma.ProductOptionUncheckedUpdateManyWithoutCompanyInput> = z.object({
+  id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  imageUrl: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  unitPrice: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
+  currency: z.union([ z.lazy(() => CurrencySchema),z.lazy(() => EnumCurrencyFieldUpdateOperationsInputSchema) ]).optional(),
+  importedFrom: z.union([ z.lazy(() => CountrySchema),z.lazy(() => EnumCountryFieldUpdateOperationsInputSchema) ]).optional(),
+  inventoryQuantity: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  leadtime: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  status: z.union([ z.lazy(() => ProductOptionStatusSchema),z.lazy(() => EnumProductOptionStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  location: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  productId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
 export const PurchaseOrderUpdateWithoutCompanyInputSchema: z.ZodType<Prisma.PurchaseOrderUpdateWithoutCompanyInput> = z.object({
   id: z.union([ z.string().cuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   orderedQuantity: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4222,7 +4534,8 @@ export const ProductOptionCreateManyProductInputSchema: z.ZodType<Prisma.Product
   status: z.lazy(() => ProductOptionStatusSchema).optional(),
   location: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  updatedAt: z.coerce.date().optional(),
+  companyId: z.string()
 }).strict();
 
 export const ProductOptionUpdateWithoutProductInputSchema: z.ZodType<Prisma.ProductOptionUpdateWithoutProductInput> = z.object({
@@ -4238,6 +4551,7 @@ export const ProductOptionUpdateWithoutProductInputSchema: z.ZodType<Prisma.Prod
   location: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  company: z.lazy(() => CompanyUpdateOneRequiredWithoutProductOptionsNestedInputSchema).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderUpdateManyWithoutProductOptionNestedInputSchema).optional()
 }).strict();
 
@@ -4254,6 +4568,7 @@ export const ProductOptionUncheckedUpdateWithoutProductInputSchema: z.ZodType<Pr
   location: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  companyId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   purchaseOrders: z.lazy(() => PurchaseOrderUncheckedUpdateManyWithoutProductOptionNestedInputSchema).optional()
 }).strict();
 
@@ -4270,6 +4585,7 @@ export const ProductOptionUncheckedUpdateManyWithoutProductInputSchema: z.ZodTyp
   location: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  companyId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const PurchaseOrderCreateManyProductOptionInputSchema: z.ZodType<Prisma.PurchaseOrderCreateManyProductOptionInput> = z.object({
