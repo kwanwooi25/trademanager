@@ -1,15 +1,17 @@
 import { DEFAULT_PER } from '@/const/api';
 import { getCompanyIdFromSession } from '@/lib/auth/utils';
 import { prisma } from '@/lib/prisma';
+import { GetPurchaseOrdersFilter } from '@/types/purchaseOrder';
+import { Prisma } from '@prisma/client';
 
 export async function getPurchaseOrders({
   page = 1,
   per = DEFAULT_PER,
   search = '',
-}: {
+  status = 'ALL',
+}: GetPurchaseOrdersFilter & {
   page?: number;
   per?: number;
-  search?: string;
 }) {
   const companyId = await getCompanyIdFromSession();
 
@@ -21,11 +23,20 @@ export async function getPurchaseOrders({
     };
   }
 
-  const where = {
+  const where: Prisma.PurchaseOrderWhereInput = {
     companyId,
-    OR: [
-      { productOption: { name: { contains: search } } },
-      { productOption: { product: { name: { contains: search } } } },
+    AND: [
+      {
+        OR: [
+          { productOption: { name: { contains: search } } },
+          { productOption: { product: { name: { contains: search } } } },
+        ],
+      },
+      {
+        status: {
+          in: status === 'ALL' ? ['ORDERED', 'RECEIVED'] : [status],
+        },
+      },
     ],
   };
 

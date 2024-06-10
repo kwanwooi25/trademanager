@@ -7,8 +7,11 @@ import { Button } from '@/components/ui/button';
 import { PATHS } from '@/const/paths';
 import { useCreateQueryString } from '@/hooks/useCreateQueryString';
 import { getPurchaseOrders } from '@/services/purchaseOrder';
+import { GetPurchaseOrdersFilter } from '@/types/purchaseOrder';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { ComponentProps } from 'react';
+import PurchaseOrderListFilter from './ListFilter';
 import PurchaseOrderListHeader from './ListHeader';
 import PurchaseOrderListItem from './ListItem';
 
@@ -19,6 +22,10 @@ export default function PurchaseOrderListPage({ purchaseOrders, lastPage, totalC
   const createQueryString = useCreateQueryString();
   const page = +(searchParams.get('page') || 1);
   const search = searchParams.get('search') ?? undefined;
+  const status = (searchParams.get('status') ?? 'ALL') as GetPurchaseOrdersFilter['status'];
+  const filter = { search, status } satisfies GetPurchaseOrdersFilter;
+
+  const isFilterEmpty = !!search && status === 'ALL';
 
   const currentUrl = `${pathname}?${searchParams.toString()}`;
 
@@ -31,6 +38,22 @@ export default function PurchaseOrderListPage({ purchaseOrders, lastPage, totalC
     router.push(`${pathname}?${createQueryString('page', `${page}`)}`);
   };
 
+  const handleFilterChange: ComponentProps<typeof PurchaseOrderListFilter>['onFilterChange'] = (
+    filter,
+  ) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    Object.entries(filter).forEach(([key, value]) => {
+      if (!value) {
+        params.delete(key);
+      } else {
+        params.set(key, value);
+      }
+    });
+
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
   return (
     <div className="max-w-6xl mx-auto px-2 py-4">
       <PageHeader title="구매 목록">
@@ -39,11 +62,14 @@ export default function PurchaseOrderListPage({ purchaseOrders, lastPage, totalC
         </Link>
       </PageHeader>
       <PageBody className={'flex flex-col gap-4'}>
-        {(!!purchaseOrders.length || !!search) && (
-          <div>list filter</div>
-          // <ProductListFilter search={search} onSearch={handleSearch} totalCount={totalCount} />
+        {(!!purchaseOrders.length || !isFilterEmpty) && (
+          <PurchaseOrderListFilter
+            filter={filter}
+            onFilterChange={handleFilterChange}
+            totalCount={totalCount}
+          />
         )}
-        {!purchaseOrders.length && !search && (
+        {!purchaseOrders.length && isFilterEmpty && (
           <div className="flex flex-col items-center py-16 gap-4">
             <p>등록된 구매 내역이 없습니다.</p>
             <p>
@@ -54,7 +80,7 @@ export default function PurchaseOrderListPage({ purchaseOrders, lastPage, totalC
             </p>
           </div>
         )}
-        {!purchaseOrders.length && !!search && (
+        {!purchaseOrders.length && !isFilterEmpty && (
           <div className="flex flex-col items-center py-16 gap-4">
             <p>검색된 구매 내역이 없습니다.</p>
           </div>
