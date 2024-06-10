@@ -38,7 +38,3 @@ export default function PurchaseOrderListFilter() {
     </div>
   );
 }
-
-type Props = {
-  totalCount?: number;
-};
