@@ -14,4 +14,5 @@ export const API_ROUTE = {
   REGISTER_COMPANY: '/api/company',
   PRODUCT: '/api/product',
   PRODUCT_OPTION: '/api/product/option',
+  PURCHASE_ORDER: '/api/purchase-order',
 } as const;

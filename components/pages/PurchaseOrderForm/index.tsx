@@ -2,6 +2,8 @@
 
 import PageBody from '@/components/PageBody';
 import PageHeader from '@/components/PageHeader';
+import ProductOptionSelect from '@/components/ProductOptionSelect';
+import { createLabel } from '@/components/ProductOptionSelect/utils';
 import { Button } from '@/components/ui/button';
 import {
   DateFormField,
@@ -15,19 +17,22 @@ import {
   SelectFormField,
 } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
-import { PATHS } from '@/const/paths';
+import { API_ROUTE, PATHS } from '@/const/paths';
 import { useAxiosError } from '@/hooks/useAxiosError';
+import { SuccessResponse } from '@/types/api';
+import { PurchaseOrderWithProductOption } from '@/types/purchaseOrder';
 import { zodResolver } from '@hookform/resolvers/zod';
+import axios from 'axios';
 import { Loader2 } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { PURCHASE_ORDER_STATUS_SELECT_OPTIONS } from './const';
 import { PurchaseOrderFormSchema, formSchema } from './formSchema';
-import ProductOptionSelect from '@/components/ProductOptionSelect';
 import { getDefaultFormValues } from './utils';
 
 export default function PurchaseOrderFormPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
   const { handleAxiosError } = useAxiosError();
@@ -45,23 +50,24 @@ export default function PurchaseOrderFormPage() {
     setIsLoading(true);
 
     try {
-      console.log(values);
       const method = isEditing ? 'patch' : 'post';
-      // TODO
-      // const { data } = await axios<SuccessResponse<Product>>({
-      //   method,
-      //   url: API_ROUTE.PRODUCT,
-      //   data: values,
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data',
-      //   },
-      // });
+      const { data } = await axios<SuccessResponse<PurchaseOrderWithProductOption>>({
+        method,
+        url: API_ROUTE.PURCHASE_ORDER,
+        data: values,
+      });
+
+      const label = createLabel(data.data.productOption);
 
       toast({
-        description: <p>{title} 성공</p>,
+        description: (
+          <p>
+            {title} ({label} {data.data.orderedQuantity}개) 성공
+          </p>
+        ),
         variant: 'success',
       });
-      // router.replace(callbackUrl);
+      router.replace(callbackUrl);
     } catch (error) {
       handleAxiosError(error);
     } finally {
