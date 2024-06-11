@@ -29,6 +29,7 @@ import { PurchaseOrderWithProductOption } from '@/types/purchaseOrder';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { Edit2, MoreVertical, Trash2 } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function PurchaseOrderListItem({ purchaseOrder }: Props) {
@@ -40,9 +41,7 @@ export default function PurchaseOrderListItem({ purchaseOrder }: Props) {
   const currentUrl = useCurrentUrl();
   const { handleAxiosError } = useAxiosError();
 
-  const handleClickEdit = () => {
-    router.push(`${PATHS.EDIT_PURCHASE_ORDER}/${id}?callbackUrl=${currentUrl}`);
-  };
+  const editPurchaseOrderUrl = `${PATHS.EDIT_PURCHASE_ORDER}/${id}?callbackUrl=${currentUrl}`;
 
   const handleClickDelete = async () => {
     try {
@@ -78,9 +77,11 @@ export default function PurchaseOrderListItem({ purchaseOrder }: Props) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={handleClickEdit}>
-              <Edit2 className="mr-2 h-4 w-4" />
-              <span>수정</span>
+            <DropdownMenuItem asChild>
+              <Link href={editPurchaseOrderUrl}>
+                <Edit2 className="mr-2 h-4 w-4" />
+                <span>수정</span>
+              </Link>
             </DropdownMenuItem>
             <AlertDialogTrigger asChild>
               <DropdownMenuItem className="text-destructive">

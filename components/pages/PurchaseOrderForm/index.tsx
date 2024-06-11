@@ -33,13 +33,14 @@ import { getDefaultFormValues } from './utils';
 export default function PurchaseOrderFormPage({ purchaseOrder }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const productOptionId = searchParams.get('productOptionId');
   const getCallbackUrl = useCallbackUrl();
   const { toast } = useToast();
   const { handleAxiosError } = useAxiosError();
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<PurchaseOrderFormSchema>({
     resolver: zodResolver(formSchema),
-    defaultValues: getDefaultFormValues({ purchaseOrder }),
+    defaultValues: getDefaultFormValues({ productOptionId, purchaseOrder }),
   });
 
   const isEditing = !!purchaseOrder;
@@ -117,5 +118,6 @@ export default function PurchaseOrderFormPage({ purchaseOrder }: Props) {
 }
 
 type Props = {
-  purchaseOrder: PurchaseOrderWithProductOption | null;
+  productOptionId?: string;
+  purchaseOrder?: PurchaseOrderWithProductOption | null;
 };

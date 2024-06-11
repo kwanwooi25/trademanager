@@ -24,6 +24,6 @@ export function getDefaultFormValues(args?: Args): PurchaseOrderFormSchema {
 }
 
 type Args = {
-  productOptionId?: string;
+  productOptionId?: string | null;
   purchaseOrder?: PurchaseOrderWithProductOption | null;
 };
