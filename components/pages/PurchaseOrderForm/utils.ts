@@ -1,4 +1,5 @@
-import { PurchaseOrder, PurchaseOrderStatus } from '@prisma/client';
+import { PurchaseOrderWithProductOption } from '@/types/purchaseOrder';
+import { PurchaseOrderStatus } from '@prisma/client';
 import { PurchaseOrderFormSchema } from './formSchema';
 
 export function getDefaultFormValues(args?: Args): PurchaseOrderFormSchema {
@@ -16,16 +17,13 @@ export function getDefaultFormValues(args?: Args): PurchaseOrderFormSchema {
   }
 
   return {
-    productOptionId,
-    orderedAt: new Date(),
-    orderedQuantity: 0,
-    receivedAt: undefined,
-    receivedQuantity: 0,
-    status: PurchaseOrderStatus.ORDERED,
+    ...purchaseOrder,
+    receivedAt: purchaseOrder.receivedAt ?? undefined,
+    receivedQuantity: purchaseOrder.receivedQuantity ?? 0,
   };
 }
 
 type Args = {
   productOptionId?: string;
-  purchaseOrder?: PurchaseOrder;
+  purchaseOrder?: PurchaseOrderWithProductOption | null;
 };

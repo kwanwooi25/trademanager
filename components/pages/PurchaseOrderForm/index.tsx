@@ -18,6 +18,7 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import { API_ROUTE, PATHS } from '@/const/paths';
 import { useAxiosError } from '@/hooks/useAxiosError';
+import { useCallbackUrl } from '@/hooks/useCallbackUrl';
 import { SuccessResponse } from '@/types/api';
 import { PurchaseOrderWithProductOption } from '@/types/purchaseOrder';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,20 +30,21 @@ import { useForm } from 'react-hook-form';
 import { PurchaseOrderFormSchema, formSchema } from './formSchema';
 import { getDefaultFormValues } from './utils';
 
-export default function PurchaseOrderFormPage() {
+export default function PurchaseOrderFormPage({ purchaseOrder }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const getCallbackUrl = useCallbackUrl();
   const { toast } = useToast();
   const { handleAxiosError } = useAxiosError();
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<PurchaseOrderFormSchema>({
     resolver: zodResolver(formSchema),
-    defaultValues: getDefaultFormValues(),
+    defaultValues: getDefaultFormValues({ purchaseOrder }),
   });
 
-  const isEditing = false;
-  const title = isEditing ? '구매 수정' : '구매 입력';
-  const callbackUrl = searchParams.get('callbackUrl') ?? PATHS.PURCHASE_ORDER_LIST;
+  const isEditing = !!purchaseOrder;
+  const title = isEditing ? '주문 수정' : '주문 입력';
+  const callbackUrl = getCallbackUrl(searchParams.get('callbackUrl') ?? PATHS.PURCHASE_ORDER_LIST);
 
   const onSubmit = async (values: PurchaseOrderFormSchema) => {
     setIsLoading(true);
@@ -76,10 +78,10 @@ export default function PurchaseOrderFormPage() {
   return (
     <Form {...form}>
       <form className="max-w-2xl mx-auto px-2 py-4" onSubmit={form.handleSubmit(onSubmit)}>
-        <PageHeader title="구매 입력" backButton>
+        <PageHeader title={title} backButton>
           <Button type="submit" disabled={isLoading}>
             {isLoading && <Loader2 className={'mr-2 h-4 w-4 animate-spin'} />}
-            <span>구매 입력</span>
+            <span>{title}</span>
           </Button>
         </PageHeader>
         <PageBody className="grid grid-cols-[1fr_160px_100px] items-center gap-4">
@@ -113,3 +115,7 @@ export default function PurchaseOrderFormPage() {
     </Form>
   );
 }
+
+type Props = {
+  purchaseOrder: PurchaseOrderWithProductOption | null;
+};

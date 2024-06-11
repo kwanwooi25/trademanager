@@ -13,24 +13,22 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import { API_ROUTE, PATHS } from '@/const/paths';
 import { useAxiosError } from '@/hooks/useAxiosError';
+import { useCurrentUrl } from '@/hooks/useCurrentUrl';
 import { isValidUrl } from '@/lib/string';
 import { ProductWithOptions } from '@/types/product';
 import axios from 'axios';
 import { LucideEdit2, LucideExternalLink, LucideMoreVertical, LucideTrash2 } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Fragment } from 'react';
 
 export default function ProductListItem({ product }: Props) {
   const { toast } = useToast();
   const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const currentUrl = useCurrentUrl();
   const { handleAxiosError } = useAxiosError();
   const { purchasedAt, options } = product;
   const hasPurchaseUrl = isValidUrl(purchasedAt);
-
-  const currentUrl = `${pathname}?${searchParams.toString()}`;
 
   const handleClickEdit = () => {
     router.push(`${PATHS.EDIT_PRODUCT}/${product.id}?callbackUrl=${currentUrl}`);

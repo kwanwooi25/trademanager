@@ -8,20 +8,20 @@ import { Button } from '@/components/ui/button';
 import { DEFAULT_PER } from '@/const/api';
 import { PATHS } from '@/const/paths';
 import { withAuth } from '@/lib/auth/hoc';
-import { getUrl } from '@/lib/url';
+import { getCurrentUrl, getUrl } from '@/lib/url';
 import { getPurchaseOrders } from '@/services/purchaseOrder';
 import { GetPurchaseOrdersFilter } from '@/types/purchaseOrder';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 export default withAuth(async () => {
-  const { search: urlSearch, pathname, searchParams } = getUrl();
+  const { searchParams } = getUrl();
   const page = +(searchParams.get('page') ?? 1);
   const per = +(searchParams.get('per') ?? DEFAULT_PER);
   const search = searchParams.get('search') ?? '';
   const status = (searchParams.get('status') ?? 'ALL') as GetPurchaseOrdersFilter['status'];
 
-  const currentUrl = `${pathname}${urlSearch}`;
+  const currentUrl = getCurrentUrl();
   const addPurchaseOrderPath = `${PATHS.ADD_PURCHASE_ORDER}?callbackUrl=${currentUrl}`;
 
   const isFilterEmpty = !!search && status === 'ALL';
@@ -41,7 +41,7 @@ export default withAuth(async () => {
     <div className="max-w-6xl mx-auto px-2 py-4">
       <PageHeader title="구매 목록">
         <Link href={addPurchaseOrderPath}>
-          <Button>구매 입력</Button>
+          <Button>주문 입력</Button>
         </Link>
       </PageHeader>
 
@@ -56,7 +56,7 @@ export default withAuth(async () => {
               <p>등록된 구매 내역이 없습니다.</p>
               <p>
                 <Link href={addPurchaseOrderPath}>
-                  <Button>구매 입력</Button>
+                  <Button>주문 입력</Button>
                 </Link>{' '}
                 버튼을 눌러 구매 내역을 추가하세요.
               </p>

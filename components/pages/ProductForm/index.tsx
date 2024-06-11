@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { API_ROUTE, PATHS } from '@/const/paths';
 import { useAxiosError } from '@/hooks/useAxiosError';
+import { useCallbackUrl } from '@/hooks/useCallbackUrl';
 import { SuccessResponse } from '@/types/api';
 import { ProductWithOptions } from '@/types/product';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -32,6 +33,7 @@ import { getDefaultFormValues } from './utils';
 export default function ProductFormPage({ product }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const getCallbackUrl = useCallbackUrl();
   const { toast } = useToast();
   const { handleAxiosError } = useAxiosError();
   const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +44,7 @@ export default function ProductFormPage({ product }: Props) {
 
   const isEditing = !!product;
   const title = isEditing ? '상품 수정' : '상품 등록';
-  const callbackUrl = searchParams.get('callbackUrl') ?? PATHS.PRODUCT_LIST;
+  const callbackUrl = getCallbackUrl(searchParams.get('callbackUrl') ?? PATHS.PRODUCT_LIST);
 
   const onSubmit = async (values: ProductFormSchema) => {
     setIsLoading(true);

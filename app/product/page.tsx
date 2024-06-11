@@ -8,18 +8,18 @@ import { Button } from '@/components/ui/button';
 import { DEFAULT_PER } from '@/const/api';
 import { PATHS } from '@/const/paths';
 import { withAuth } from '@/lib/auth/hoc';
-import { getUrl } from '@/lib/url';
+import { getCurrentUrl, getUrl } from '@/lib/url';
 import { getProducts } from '@/services/product';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 export default withAuth(async () => {
-  const { pathname, search: urlSearch, searchParams } = getUrl();
+  const { searchParams } = getUrl();
   const page = +(searchParams.get('page') ?? 1);
   const per = +(searchParams.get('per') ?? DEFAULT_PER);
   const search = searchParams.get('search') ?? '';
 
-  const currentUrl = `${pathname}${urlSearch}`;
+  const currentUrl = getCurrentUrl();
   const addProductPath = `${PATHS.ADD_PRODUCT}?callbackUrl=${currentUrl}`;
 
   const { products, lastPage } = await getProducts({ page, per, search });

@@ -8,16 +8,24 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { PATHS } from '@/const/paths';
 import { PURCHASE_ORDER_STATUS_LABEL_MAP } from '@/const/purchaseOrder';
+import { useCurrentUrl } from '@/hooks/useCurrentUrl';
 import { PurchaseOrderWithProductOption } from '@/types/purchaseOrder';
 import { format } from 'date-fns';
 import { Edit2, MoreVertical, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function PurchaseOrderListItem({ purchaseOrder }: Props) {
-  const { orderedAt, status, productOption, orderedQuantity, receivedQuantity, receivedAt } =
+  const { id, orderedAt, status, productOption, orderedQuantity, receivedQuantity, receivedAt } =
     purchaseOrder;
 
-  const handleClickEdit = () => {};
+  const router = useRouter();
+  const currentUrl = useCurrentUrl();
+
+  const handleClickEdit = () => {
+    router.push(`${PATHS.EDIT_PURCHASE_ORDER}/${id}?callbackUrl=${currentUrl}`);
+  };
 
   const handleClickDelete = () => {};
 

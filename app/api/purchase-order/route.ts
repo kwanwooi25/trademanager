@@ -20,3 +20,18 @@ export async function POST(req: NextRequest) {
     return handlePrismaClientError(e);
   }
 }
+
+export async function PATCH(req: NextRequest) {
+  await getUserFromSession();
+
+  try {
+    const data = await req.json();
+    const purchaseOrder = await prisma.purchaseOrder.update({
+      where: { id: data.id },
+      data,
+    });
+    return handleSuccess({ data: purchaseOrder, status: HttpStatusCode.Ok });
+  } catch (e) {
+    return handlePrismaClientError(e);
+  }
+}
