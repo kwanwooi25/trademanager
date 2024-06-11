@@ -8,16 +8,9 @@ export default function PurchaseOrderFormSkeleton() {
       <PageHeader title={<Skeleton className="h-7 w-20" />}>
         <Skeleton className="h-10 w-20" />
       </PageHeader>
-      <PageBody className="flex flex-col gap-4">
+      <PageBody className="grid grid-cols-[1fr_160px_100px] items-center gap-4">
         <Skeleton.Input />
-        <div className="grid grid-cols-[160px_1fr] items-center gap-4">
-          <Skeleton.Input />
-          <Skeleton.Input />
-        </div>
-        <div className="grid grid-cols-[160px_1fr] items-center gap-4">
-          <Skeleton.Input />
-          <Skeleton.Input />
-        </div>
+        <Skeleton.Input />
         <Skeleton.Input />
       </PageBody>
     </div>

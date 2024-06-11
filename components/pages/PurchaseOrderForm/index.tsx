@@ -14,7 +14,6 @@ import {
   FormLabel,
   FormMessage,
   InputFormField,
-  SelectFormField,
 } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
 import { API_ROUTE, PATHS } from '@/const/paths';
@@ -27,7 +26,6 @@ import { Loader2 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { PURCHASE_ORDER_STATUS_SELECT_OPTIONS } from './const';
 import { PurchaseOrderFormSchema, formSchema } from './formSchema';
 import { getDefaultFormValues } from './utils';
 
@@ -84,7 +82,7 @@ export default function PurchaseOrderFormPage() {
             <span>구매 입력</span>
           </Button>
         </PageHeader>
-        <PageBody className="flex flex-col gap-4">
+        <PageBody className="grid grid-cols-[1fr_160px_100px] items-center gap-4">
           <FormField
             control={form.control}
             name="productOptionId"
@@ -103,30 +101,12 @@ export default function PurchaseOrderFormPage() {
               </FormItem>
             )}
           />
-          <div className="grid grid-cols-[160px_1fr] items-center gap-4">
-            <DateFormField control={form.control} name="orderedAt" label="주문일" />
-            <InputFormField
-              control={form.control}
-              name="orderedQuantity"
-              label="주문수량"
-              inputProps={{ format: 'thousandSeparator' }}
-            />
-          </div>
-          <div className="grid grid-cols-[160px_1fr] items-center gap-4">
-            <DateFormField control={form.control} name="receivedAt" label="입고일" />
-            <InputFormField
-              control={form.control}
-              name="receivedQuantity"
-              label="입고수량"
-              inputProps={{ format: 'thousandSeparator' }}
-            />
-          </div>
-          <SelectFormField
+          <DateFormField control={form.control} name="orderedAt" label="주문일" />
+          <InputFormField
             control={form.control}
-            name="status"
-            label="주문 상태"
-            placeholder="주문 상태 선택"
-            selectOptions={PURCHASE_ORDER_STATUS_SELECT_OPTIONS}
+            name="orderedQuantity"
+            label="주문수량"
+            inputProps={{ format: 'thousandSeparator' }}
           />
         </PageBody>
       </form>
