@@ -3,11 +3,11 @@ import { PurchaseOrderStatus } from '@prisma/client';
 import { PurchaseOrderFormSchema } from './formSchema';
 
 export function getDefaultFormValues(args?: Args): PurchaseOrderFormSchema {
-  const { productOptionId = '', purchaseOrder } = args ?? {};
+  const { productOptionId, purchaseOrder } = args ?? {};
 
   if (!purchaseOrder) {
     return {
-      productOptionId,
+      productOptionId: productOptionId ?? '',
       orderedAt: new Date(),
       orderedQuantity: 0,
       receivedAt: undefined,

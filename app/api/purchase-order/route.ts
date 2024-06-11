@@ -29,6 +29,7 @@ export async function PATCH(req: NextRequest) {
     const purchaseOrder = await prisma.purchaseOrder.update({
       where: { id: data.id },
       data,
+      include: { productOption: { include: { product: true } } },
     });
     return handleSuccess({ data: purchaseOrder, status: HttpStatusCode.Ok });
   } catch (e) {
