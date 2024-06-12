@@ -10,6 +10,7 @@ export const PATHS = {
   SALE_LIST: '/sales',
   ADD_SALE: '/sales/add',
   EDIT_SALE: '/sales/edit',
+  SALES_CHANNEL_LIST: '/settings/sales-channel',
 } as const;
 
 export const API_ROUTE = {
@@ -19,4 +20,6 @@ export const API_ROUTE = {
   PRODUCT: '/api/product',
   PRODUCT_OPTION: '/api/product/option',
   PURCHASE_ORDER: '/api/purchase-order',
+  SALES: '/api/sales',
+  SALES_CHANNEL: '/api/sales-channel',
 } as const;

@@ -118,6 +118,5 @@ export default function PurchaseOrderFormPage({ purchaseOrder }: Props) {
 }
 
 type Props = {
-  productOptionId?: string;
   purchaseOrder?: PurchaseOrderWithProductOption | null;
 };

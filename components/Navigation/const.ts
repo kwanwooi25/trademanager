@@ -12,7 +12,7 @@ export const NAV_LIST = [
     protected: true,
   },
   {
-    href: '/sales',
+    href: PATHS.SALE_LIST,
     label: '판매 관리',
     protected: true,
   },
@@ -29,6 +29,11 @@ export const NAV_LIST = [
       {
         href: '/company',
         label: '조직 설정',
+        protected: true,
+      },
+      {
+        href: '/sales-channel',
+        label: '판매 채널 설정',
         protected: true,
       },
     ],

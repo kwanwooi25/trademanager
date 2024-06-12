@@ -19,7 +19,7 @@ export default function Navigation() {
     <NavigationMenu className="mx-auto">
       <NavigationMenuList className="flex items-center gap-2">
         {NAV_LIST.map(({ href, label }) => {
-          const isActive = pathname.includes(href);
+          const isActive = pathname.startsWith(href);
 
           return (
             <NavigationMenuItem key={href}>

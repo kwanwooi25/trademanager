@@ -9,7 +9,7 @@ import { PropsWithChildren } from 'react';
 
 export default function MainLayout({ children }: PropsWithChildren) {
   const pathname = usePathname();
-  const currentNav = NAV_LIST.find(({ href }) => pathname?.includes(href));
+  const currentNav = NAV_LIST.find(({ href }) => pathname?.startsWith(href));
   const { href, submenus } = currentNav || {};
 
   return (

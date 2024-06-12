@@ -1,0 +1,1 @@
+export { getSalesChannels } from './getSalesChannels';

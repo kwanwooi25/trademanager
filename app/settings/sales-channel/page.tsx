@@ -1,9 +1,9 @@
-import SalesListPage from '@/components/pages/SalesList';
+import SalesChannelListPage from '@/components/pages/SalesChannelList';
 import { DEFAULT_PER } from '@/const/api';
 import { PATHS } from '@/const/paths';
 import { withAuth } from '@/lib/auth/hoc';
 import { getUrl } from '@/lib/url';
-import { getSales } from '@/services/sales';
+import { getSalesChannels } from '@/services/salesChannel';
 import { redirect } from 'next/navigation';
 
 export default withAuth(async () => {
@@ -12,15 +12,15 @@ export default withAuth(async () => {
   const per = +(searchParams.get('per') ?? DEFAULT_PER);
   const search = searchParams.get('search') ?? '';
 
-  const res = await getSales({
+  const res = await getSalesChannels({
     page,
     per,
     search,
   });
 
-  if (page > 1 && !res.sales.length) {
-    return redirect(PATHS.SALE_LIST);
+  if (page > 1 && !res.salesChannels.length) {
+    return redirect(PATHS.SALES_CHANNEL_LIST);
   }
 
-  return <SalesListPage {...res} />;
+  return <SalesChannelListPage {...res} />;
 });
