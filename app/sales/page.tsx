@@ -1,15 +1,12 @@
 import PageBody from '@/components/PageBody';
 import PageHeader from '@/components/PageHeader';
 import Pagination from '@/components/Pagination';
-import ProductListFilter from '@/components/pages/ProductList/ListFilter';
-import ProductListHeader from '@/components/pages/ProductList/ListHeader';
-import ProductListItem from '@/components/pages/ProductList/ListItem';
 import { Button } from '@/components/ui/button';
 import { DEFAULT_PER } from '@/const/api';
 import { PATHS } from '@/const/paths';
 import { withAuth } from '@/lib/auth/hoc';
 import { getCurrentUrl, getUrl } from '@/lib/url';
-import { getProducts } from '@/services/product';
+import { Sale } from '@prisma/client';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -20,49 +17,60 @@ export default withAuth(async () => {
   const search = searchParams.get('search') ?? '';
 
   const currentUrl = getCurrentUrl();
-  const addProductPath = `${PATHS.ADD_PRODUCT}?callbackUrl=${currentUrl}`;
+  const addSalePath = `${PATHS.ADD_SALE}?callbackUrl=${currentUrl}`;
 
-  const { products, lastPage } = await getProducts({ page, per, search });
+  const isFilterEmpty = !search;
 
-  if (page > 1 && !products.length) {
-    return redirect(PATHS.PRODUCT_LIST);
+  // TODO: fetch sales
+  const sales: Sale[] = [];
+  const lastPage = 1;
+  // const { purchaseOrders, lastPage } = await getPurchaseOrders({
+  //   page,
+  //   per,
+  //   search,
+  // });
+
+  if (page > 1 && !sales.length) {
+    return redirect(PATHS.SALE_LIST);
   }
 
   return (
     <div className="max-w-6xl mx-auto px-2 py-4">
-      <PageHeader title="상품 목록">
-        <Link href={addProductPath}>
-          <Button>상품 등록</Button>
+      <PageHeader title="판매 목록">
+        <Link href={addSalePath}>
+          <Button>판매 입력</Button>
         </Link>
       </PageHeader>
-      <PageBody className={'flex flex-col gap-4'}>
-        <ProductListFilter />
-        <ul className="flex flex-col">
-          <ProductListHeader />
 
-          {!products.length && !search && (
+      <PageBody className={'flex flex-col gap-4'}>
+        {/* TODO: ListFilter */}
+
+        <ul className="flex flex-col">
+          {/* TODO: ListHeader */}
+
+          {!sales.length && isFilterEmpty && (
             <div className="flex flex-col items-center py-16 gap-4">
-              <p>등록된 상품이 없습니다.</p>
+              <p>등록된 판매 내역이 없습니다.</p>
               <p className="flex items-center gap-2">
-                <Link href={addProductPath}>
-                  <Button>상품 등록</Button>
+                <Link href={addSalePath}>
+                  <Button>판매 입력</Button>
                 </Link>
-                <span>버튼을 눌러 상품을 추가하세요.</span>
+                <span>버튼을 눌러 판매 내역을 추가하세요.</span>
               </p>
             </div>
           )}
 
-          {!products.length && !!search && (
+          {!sales.length && !isFilterEmpty && (
             <div className="flex flex-col items-center py-16 gap-4">
-              <p>검색된 상품이 없습니다.</p>
+              <p>검색된 판매 내역이 없습니다.</p>
             </div>
           )}
 
-          {!!products.length && (
+          {!!sales.length && (
             <>
-              {products.map((product) => (
-                <ProductListItem key={product.id} product={product} />
-              ))}
+              {/* {sales.map((sale) => (
+                <SalesListItem key={sale.id} sale={sale} />
+              ))} */}
               {lastPage > 1 && <Pagination currentPage={page} lastPage={lastPage} />}
             </>
           )}

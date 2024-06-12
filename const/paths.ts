@@ -7,6 +7,9 @@ export const PATHS = {
   PURCHASE_ORDER_LIST: '/purchase-order',
   ADD_PURCHASE_ORDER: '/purchase-order/add',
   EDIT_PURCHASE_ORDER: '/purchase-order/edit',
+  SALE_LIST: '/sales',
+  ADD_SALE: '/sales/add',
+  EDIT_SALE: '/sales/edit',
 } as const;
 
 export const API_ROUTE = {

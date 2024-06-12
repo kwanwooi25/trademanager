@@ -24,7 +24,7 @@ export default withAuth(async () => {
   const currentUrl = getCurrentUrl();
   const addPurchaseOrderPath = `${PATHS.ADD_PURCHASE_ORDER}?callbackUrl=${currentUrl}`;
 
-  const isFilterEmpty = !!search && status === 'ALL';
+  const isFilterEmpty = !search && status === 'ALL';
 
   const { purchaseOrders, lastPage } = await getPurchaseOrders({
     page,
@@ -54,11 +54,11 @@ export default withAuth(async () => {
           {!purchaseOrders.length && isFilterEmpty && (
             <div className="flex flex-col items-center py-16 gap-4">
               <p>등록된 구매 내역이 없습니다.</p>
-              <p>
+              <p className="flex items-center gap-2">
                 <Link href={addPurchaseOrderPath}>
                   <Button>주문 입력</Button>
-                </Link>{' '}
-                버튼을 눌러 구매 내역을 추가하세요.
+                </Link>
+                <span>버튼을 눌러 구매 내역을 추가하세요.</span>
               </p>
             </div>
           )}
