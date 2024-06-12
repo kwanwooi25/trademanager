@@ -86,6 +86,8 @@ model Company {
   products       Product[]
   productOptions ProductOption[]
   purchaseOrders PurchaseOrder[]
+  sales          Sale[]
+  salesChannels  SalesChannel[]
 }
 
 model Product {
@@ -96,10 +98,10 @@ model Product {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  options ProductOption[]
-
   companyId String
-  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  company Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  options ProductOption[]
 }
 
 model ProductOption {
@@ -118,12 +120,12 @@ model ProductOption {
   updatedAt DateTime @updatedAt
 
   productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
   companyId String
-  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
+  product        Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  company        Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
   purchaseOrders PurchaseOrder[]
+  sales          Sale[]
 }
 
 model PurchaseOrder {
@@ -134,11 +136,45 @@ model PurchaseOrder {
   receivedAt       DateTime?
   status           PurchaseOrderStatus @default(ORDERED)
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   productOptionId String
-  productOption   ProductOption @relation(fields: [productOptionId], references: [id], onDelete: Cascade)
+  companyId       String
+
+  productOption ProductOption @relation(fields: [productOptionId], references: [id], onDelete: Cascade)
+  company       Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+model Sale {
+  id       String   @id @default(cuid())
+  quantity Int      @default(0)
+  soldAt   DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  productOptionId String
+  channelId       String
+  companyId       String
+
+  productOption ProductOption @relation(fields: [productOptionId], references: [id], onDelete: Cascade)
+  channel       SalesChannel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  company       Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+model SalesChannel {
+  id   String  @id @default(cuid())
+  name String
+  url  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   companyId String
-  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  sales   Sale[]
 }
 
 enum PurchaseOrderStatus {
