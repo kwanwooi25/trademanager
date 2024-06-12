@@ -1,5 +1,5 @@
 import { SaleWithProductOptionAndChannel } from '@/types/sale';
-import { SaleFormSchema } from './formSchame';
+import { SaleFormSchema } from './formSchema';
 import { DEFAULT_SALE_FORM_DATA } from './const';
 
 export function getDefaultFormValues(args?: Args): SaleFormSchema {

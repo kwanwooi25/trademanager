@@ -1,5 +1,5 @@
 import { PurchaseOrderStatus } from '@prisma/client';
-import { PURCHASE_ORDER_STATUS_SELECT_OPTIONS } from '../pages/PurchaseOrderForm/const';
+import { PURCHASE_ORDER_STATUS_SELECT_OPTIONS } from '../forms/PurchaseOrderFormDialog/const';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 export default function PurchaseOrderStatusSelect({ value, onChange, removeAllOption }: Props) {

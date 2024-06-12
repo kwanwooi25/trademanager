@@ -2,6 +2,7 @@
 
 import ProductImage from '@/components/ProductImage';
 import { createLabel } from '@/components/ProductOptionSelect/utils';
+import PurchaseOrderFormDialog from '@/components/forms/PurchaseOrderFormDialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,37 +16,22 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { DateFormField, Form, InputFormField } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
-import { API_ROUTE, PATHS } from '@/const/paths';
+import { API_ROUTE } from '@/const/paths';
 import { PURCHASE_ORDER_STATUS_LABEL_MAP } from '@/const/purchaseOrder';
 import { useAxiosError } from '@/hooks/useAxiosError';
-import { useCurrentUrl } from '@/hooks/useCurrentUrl';
 import { SuccessResponse } from '@/types/api';
 import { PurchaseOrderWithProductOption } from '@/types/purchaseOrder';
-import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
 import { format } from 'date-fns';
-import { Edit2, Loader2, MoreVertical, PackageCheck, PackageX, Trash2 } from 'lucide-react';
-import Link from 'next/link';
+import { Edit2, MoreVertical, PackageCheck, PackageX, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { ComponentProps, ReactNode, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { PurchaseOrderFormSchema, formSchema } from '../../PurchaseOrderForm/formSchema';
-import { getDefaultFormValues } from '../../PurchaseOrderForm/utils';
 
 const DEFAULT_ALERT_DIALOG_CONETNT: {
   title: ReactNode;
@@ -65,27 +51,23 @@ export default function PurchaseOrderListItem({ purchaseOrder }: Props) {
 
   const { toast } = useToast();
   const router = useRouter();
-  const currentUrl = useCurrentUrl();
   const { handleAxiosError } = useAxiosError();
 
   const [alertDialogContent, setAlertDialogContent] = useState({ ...DEFAULT_ALERT_DIALOG_CONETNT });
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const form = useForm<PurchaseOrderFormSchema>({
-    resolver: zodResolver(formSchema),
-    defaultValues: getDefaultFormValues({ purchaseOrder }),
-  });
-
-  const editPurchaseOrderUrl = `${PATHS.EDIT_PURCHASE_ORDER}/${id}?callbackUrl=${currentUrl}`;
+  const [purchaseOrderFormDialogMode, setPurchaseOrderFormDialogMode] =
+    useState<ComponentProps<typeof PurchaseOrderFormDialog>['mode']>('EDIT_ORDERS');
 
   const setOrderAsOrdered = async () => {
     try {
-      const { data } = await axios.patch<SuccessResponse<PurchaseOrderWithProductOption>>(
-        API_ROUTE.PURCHASE_ORDER,
-        { id: purchaseOrder.id, status: 'ORDERED', receivedAt: null, receivedQuantity: 0 },
-      );
-      const label = createLabel(data.data.productOption);
+      await axios.patch<SuccessResponse<number>>(API_ROUTE.PURCHASE_ORDER, [
+        {
+          ...purchaseOrder,
+          status: 'ORDERED',
+          receivedAt: null,
+          receivedQuantity: 0,
+        },
+      ]);
+      const label = createLabel(purchaseOrder.productOption);
 
       toast({
         description: <p>{label} 입고 취소 처리 성공</p>,
@@ -97,34 +79,6 @@ export default function PurchaseOrderListItem({ purchaseOrder }: Props) {
       handleAxiosError(error);
     }
   };
-
-  const setOrderAsReceived = form.handleSubmit(async (values: PurchaseOrderFormSchema) => {
-    setIsLoading(true);
-
-    try {
-      const { data } = await axios.patch<SuccessResponse<PurchaseOrderWithProductOption>>(
-        API_ROUTE.PURCHASE_ORDER,
-        { ...values, status: 'RECEIVED' },
-      );
-      const label = createLabel(data.data.productOption);
-
-      toast({
-        description: (
-          <p>
-            {label} {data.data.receivedQuantity?.toLocaleString()}개 입고 처리 성공
-          </p>
-        ),
-        variant: 'success',
-      });
-
-      router.refresh();
-      setIsDialogOpen(false);
-    } catch (error) {
-      handleAxiosError(error);
-    } finally {
-      setIsLoading(false);
-    }
-  });
 
   const deletePurchaseOrder = async () => {
     try {
@@ -152,8 +106,12 @@ export default function PurchaseOrderListItem({ purchaseOrder }: Props) {
       </span>
       <span className="text-center">{receivedAt ? format(receivedAt, 'yyyy-MM-dd') : '-'}</span>
 
-      <AlertDialog>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <PurchaseOrderFormDialog
+        mode={purchaseOrderFormDialogMode}
+        purchaseOrders={[purchaseOrder]}
+        customTrigger
+      >
+        <AlertDialog>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button className="ml-auto" size="icon" variant="ghost">
@@ -161,12 +119,12 @@ export default function PurchaseOrderListItem({ purchaseOrder }: Props) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem asChild>
-                <Link href={editPurchaseOrderUrl}>
+              <PurchaseOrderFormDialog.Trigger asChild>
+                <DropdownMenuItem onClick={() => setPurchaseOrderFormDialogMode('EDIT_ORDERS')}>
                   <Edit2 className="mr-2 h-4 w-4" />
                   <span>수정</span>
-                </Link>
-              </DropdownMenuItem>
+                </DropdownMenuItem>
+              </PurchaseOrderFormDialog.Trigger>
               {status === 'RECEIVED' && !!receivedAt && !!receivedQuantity ? (
                 <AlertDialogTrigger asChild>
                   <DropdownMenuItem
@@ -188,12 +146,14 @@ export default function PurchaseOrderListItem({ purchaseOrder }: Props) {
                   </DropdownMenuItem>
                 </AlertDialogTrigger>
               ) : (
-                <DialogTrigger asChild>
-                  <DropdownMenuItem>
+                <PurchaseOrderFormDialog.Trigger asChild>
+                  <DropdownMenuItem
+                    onClick={() => setPurchaseOrderFormDialogMode('RECEIVE_ORDERS')}
+                  >
                     <PackageCheck className="mr-2 h-4 w-4" />
                     <span>입고 완료</span>
                   </DropdownMenuItem>
-                </DialogTrigger>
+                </PurchaseOrderFormDialog.Trigger>
               )}
               <AlertDialogTrigger asChild>
                 <DropdownMenuItem
@@ -230,33 +190,8 @@ export default function PurchaseOrderListItem({ purchaseOrder }: Props) {
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
-
-          <Form {...form}>
-            <form>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>입고 완료 처리</DialogTitle>
-                </DialogHeader>
-                <div className="py-4 grid grid-cols-[1fr_2fr] items-center gap-4">
-                  <DateFormField control={form.control} name="receivedAt" label="입고일" />
-                  <InputFormField
-                    control={form.control}
-                    name="receivedQuantity"
-                    label="입고수량"
-                    inputProps={{ format: 'thousandSeparator' }}
-                  />
-                </div>
-                <DialogFooter>
-                  <Button onClick={setOrderAsReceived} disabled={isLoading}>
-                    {isLoading && <Loader2 className={'mr-2 h-4 w-4 animate-spin'} />}
-                    <span>저장</span>
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </form>
-          </Form>
-        </Dialog>
-      </AlertDialog>
+        </AlertDialog>
+      </PurchaseOrderFormDialog>
     </li>
   );
 }

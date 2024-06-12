@@ -1,7 +1,6 @@
 'use client';
 
 import ProductOptionSelect from '@/components/ProductOptionSelect';
-import SalesChannelSelect from '@/components/SalesChannelSelect';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -26,19 +25,20 @@ import { API_ROUTE } from '@/const/paths';
 import { useAxiosError } from '@/hooks/useAxiosError';
 import { cn } from '@/lib/utils';
 import { SuccessResponse } from '@/types/api';
-import { SaleWithProductOptionAndChannel } from '@/types/sale';
+import { PurchaseOrderWithProductOption } from '@/types/purchaseOrder';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
 import { Loader2, Plus, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { PropsWithChildren, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { DEFAULT_SALE_FORM_DATA } from './const';
-import { SaleFormSchema, formSchema } from './formSchema';
+import { DEFAULT_PURCHASE_ORDER_FORM_DATA } from './const';
+import { PurchaseOrderFormSchema, formSchema } from './formSchema';
 import { getDefaultFormValues } from './utils';
 
-export default function SaleFormDialog({
-  sales = [],
+export default function PurchaseOrderFormDialog({
+  mode = 'ADD_ORDERS',
+  purchaseOrders = [],
   productOptionId,
   children,
   customTrigger,
@@ -47,37 +47,42 @@ export default function SaleFormDialog({
   const router = useRouter();
   const { toast } = useToast();
   const { handleAxiosError } = useAxiosError();
-  const form = useForm<SaleFormSchema>({
+  const form = useForm<PurchaseOrderFormSchema>({
     resolver: zodResolver(formSchema),
-    defaultValues: getDefaultFormValues({ productOptionId, sales }),
+    defaultValues: getDefaultFormValues({ productOptionId, purchaseOrders }),
   });
   const { isSubmitting } = form.formState;
 
   const { fields, append, update, remove } = useFieldArray({
     control: form.control,
-    name: 'sales',
+    name: 'purchaseOrders',
     keyName: 'fieldId',
   });
 
-  const addSale = () => append({ ...DEFAULT_SALE_FORM_DATA });
-  const removeSale = (i: number) => () => {
+  const addPurchaseOrder = () => append({ ...DEFAULT_PURCHASE_ORDER_FORM_DATA });
+  const removePurchaseOrder = (i: number) => () => {
     if (fields.length <= 1) {
-      update(i, { ...DEFAULT_SALE_FORM_DATA });
+      update(i, { ...DEFAULT_PURCHASE_ORDER_FORM_DATA });
       return;
     }
     remove(i);
   };
 
-  const isEditing = !!sales.length;
-  const title = isEditing ? '판매 수정' : '판매 입력';
+  const isEditing = !!purchaseOrders.length;
+  const title = (() => {
+    if (!isEditing || mode === 'ADD_ORDERS') return '주문 입력';
+    if (mode === 'EDIT_ORDERS') return '주문 수정';
+    if (mode === 'RECEIVE_ORDERS') return '입고 완료 처리';
+    return '주문 입력';
+  })();
 
-  const submitForm = form.handleSubmit(async (values: SaleFormSchema) => {
+  const submitForm = form.handleSubmit(async (values: PurchaseOrderFormSchema) => {
     try {
       const method = isEditing ? 'patch' : 'post';
       const { data } = await axios<SuccessResponse<number>>({
         method,
-        url: API_ROUTE.SALES,
-        data: values.sales,
+        url: API_ROUTE.PURCHASE_ORDER,
+        data: values.purchaseOrders,
       });
 
       toast({
@@ -112,10 +117,10 @@ export default function SaleFormDialog({
             </DialogHeader>
             <div className="flex flex-col gap-4 min-h-[50vh] max-h-[50vh] overflow-y-auto">
               {fields.map(({ fieldId }, index) => (
-                <div key={fieldId} className="grid grid-cols-[1fr_140px_80px_1fr_40px] gap-4">
+                <div key={fieldId} className="grid grid-cols-[1fr_140px_80px_40px] gap-4">
                   <FormField
                     control={form.control}
-                    name={`sales.${index}.productOptionId`}
+                    name={`purchaseOrders.${index}.productOptionId`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
                         <FormLabel className="h-[24px] flex items-center">상품 옵션</FormLabel>
@@ -123,7 +128,10 @@ export default function SaleFormDialog({
                           <ProductOptionSelect
                             value={field.value}
                             onChange={(productOptionId) =>
-                              form.setValue(`sales.${index}.productOptionId`, productOptionId)
+                              form.setValue(
+                                `purchaseOrders.${index}.productOptionId`,
+                                productOptionId,
+                              )
                             }
                           />
                         </FormControl>
@@ -131,38 +139,38 @@ export default function SaleFormDialog({
                       </FormItem>
                     )}
                   />
-                  <DateFormField
-                    control={form.control}
-                    name={`sales.${index}.soldAt`}
-                    label="판매일"
-                  />
-                  <InputFormField
-                    control={form.control}
-                    name={`sales.${index}.quantity`}
-                    label="판매수량"
-                    inputProps={{ format: 'thousandSeparator' }}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`sales.${index}.channelId`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel className="h-[24px] flex items-center">판매처</FormLabel>
-                        <FormControl>
-                          <SalesChannelSelect
-                            value={field.value}
-                            onChange={(channelId) =>
-                              form.setValue(`sales.${index}.channelId`, channelId)
-                            }
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {mode === 'RECEIVE_ORDERS' ? (
+                    <>
+                      <DateFormField
+                        control={form.control}
+                        name={`purchaseOrders.${index}.receivedAt`}
+                        label="입고일"
+                      />
+                      <InputFormField
+                        control={form.control}
+                        name={`purchaseOrders.${index}.receivedQuantity`}
+                        label="입고수량"
+                        inputProps={{ format: 'thousandSeparator' }}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <DateFormField
+                        control={form.control}
+                        name={`purchaseOrders.${index}.orderedAt`}
+                        label="주문일"
+                      />
+                      <InputFormField
+                        control={form.control}
+                        name={`purchaseOrders.${index}.orderedQuantity`}
+                        label="주문수량"
+                        inputProps={{ format: 'thousandSeparator' }}
+                      />
+                    </>
+                  )}
                   <Button
                     className={cn('mt-[32px]', isEditing && 'hidden')}
-                    onClick={removeSale(index)}
+                    onClick={removePurchaseOrder(index)}
                     variant="ghost"
                     size="icon"
                     type="button"
@@ -176,11 +184,11 @@ export default function SaleFormDialog({
             <DialogFooter>
               <Button
                 className={cn('mr-auto', isEditing && 'hidden')}
-                onClick={addSale}
+                onClick={addPurchaseOrder}
                 variant="outline"
               >
                 <Plus />
-                판매 추가
+                주문 추가
               </Button>
               <Button onClick={submitForm} disabled={isSubmitting}>
                 {isSubmitting && <Loader2 className={'mr-2 h-4 w-4 animate-spin'} />}
@@ -194,10 +202,11 @@ export default function SaleFormDialog({
   );
 }
 
-SaleFormDialog.Trigger = DialogTrigger;
+PurchaseOrderFormDialog.Trigger = DialogTrigger;
 
 type Props = PropsWithChildren<{
+  mode?: 'ADD_ORDERS' | 'EDIT_ORDERS' | 'RECEIVE_ORDERS';
   productOptionId?: string;
-  sales?: SaleWithProductOptionAndChannel[];
+  purchaseOrders?: PurchaseOrderWithProductOption[];
   customTrigger?: boolean;
 }>;

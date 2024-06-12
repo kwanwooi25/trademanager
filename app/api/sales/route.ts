@@ -1,4 +1,4 @@
-import { SaleFormSchema } from '@/components/forms/SaleFormDialog/formSchame';
+import { SaleFormSchema } from '@/components/forms/SaleFormDialog/formSchema';
 import { getUserFromSession, handlePrismaClientError, handleSuccess } from '@/lib/api';
 import { prisma } from '@/lib/prisma';
 import { HttpStatusCode } from 'axios';
