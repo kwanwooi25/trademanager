@@ -3,15 +3,7 @@
 import PageBody from '@/components/PageBody';
 import PageHeader from '@/components/PageHeader';
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Form, InputFormField } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
 import { API_ROUTE } from '@/const/paths';
 import { useAxiosError } from '@/hooks/useAxiosError';
@@ -57,79 +49,34 @@ export default function CompanyFormPage() {
   return (
     <PageBody className="w-full max-w-md mx-auto flex flex-col gap-4">
       <PageHeader title="회사 등록" />
-      <form className="flex flex-col gap-2" onSubmit={form.handleSubmit(onSubmit)}>
-        <Form {...form}>
-          <FormField
+      <Form {...form}>
+        <form className="flex flex-col gap-2" onSubmit={form.handleSubmit(onSubmit)}>
+          <InputFormField
             control={form.control}
             name="crn"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>사업자등록번호</FormLabel>
-                <FormControl>
-                  <Input {...field} autoFocus format="companyRegistrationNumber" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="사업자등록번호"
+            inputProps={{ autoFocus: true, format: 'companyRegistrationNumber' }}
           />
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>사업자명</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
+          <InputFormField control={form.control} name="name" label="사업자명" />
+          <InputFormField
             control={form.control}
             name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>사업자 전화번호</FormLabel>
-                <FormControl>
-                  <Input {...field} format="phoneNumber" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="사업자 전화번호"
+            inputProps={{ format: 'phoneNumber' }}
           />
-          <FormField
-            control={form.control}
-            name="repName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>대표자명</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
+          <InputFormField control={form.control} name="repName" label="대표자명" />
+          <InputFormField
             control={form.control}
             name="repMobile"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>대표자 휴대폰 번호</FormLabel>
-                <FormControl>
-                  <Input {...field} format="phoneNumber" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="대표자 휴대폰 번호"
+            inputProps={{ format: 'phoneNumber' }}
           />
 
           <Button className="mt-4" type="submit">
             회사 등록
           </Button>
-        </Form>
-      </form>
+        </form>
+      </Form>
     </PageBody>
   );
 }
