@@ -94,12 +94,16 @@ export default function PurchaseOrderListItem({ purchaseOrder }: Props) {
   };
 
   return (
-    <li className="px-4 py-2 grid items-center gap-4 grid-cols-[100px_70px_2fr_60px_1fr_100px_100px_100px__40px] border-b p-2">
+    <li className="px-4 py-2 grid items-center gap-4 grid-cols-[1fr_1fr_60px_4fr_1fr_1fr_1fr_40px] border-b">
       <span className="text-center">{format(orderedAt, 'yyyy-MM-dd')}</span>
       <span className="text-center">{PURCHASE_ORDER_STATUS_LABEL_MAP[status]}</span>
-      <span>{productOption.product.name}</span>
       <ProductImage imageUrl={productOption.imageUrl ?? ''} size={60} />
-      <span>{productOption.name}</span>
+      <div className="flex flex-col items-start">
+        {productOption.product.code && (
+          <span className="font-bold text-sm opacity-50">{productOption.product.code}</span>
+        )}
+        <span className="line-clamp-1">{createLabel(productOption)}</span>
+      </div>
       <span className="text-center">{orderedQuantity.toLocaleString()}</span>
       <span className="text-center">
         {receivedQuantity ? receivedQuantity.toLocaleString() : '-'}
