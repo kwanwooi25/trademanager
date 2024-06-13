@@ -5,7 +5,7 @@ export type AlertProps = {
   description?: ReactNode;
   cancelLabel?: ReactNode;
   actionLabel?: ReactNode;
-  action?: () => void | Promise<void>;
+  action?: () => void | boolean | Promise<void | boolean>;
 };
 
 export type AlertContextState = {

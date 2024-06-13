@@ -31,10 +31,13 @@ export function AlertProvider({ children }: PropsWithChildren) {
   const handleClickAction = async () => {
     try {
       setIsLoading(true);
-      await alertProps.action?.();
+      const result = await alertProps.action?.();
+      if (typeof result === 'boolean' && !result) {
+        return;
+      }
+      setIsOpen(false);
     } finally {
       setIsLoading(false);
-      setIsOpen(false);
     }
   };
 

@@ -18,8 +18,10 @@ import { SaleWithProductOptionAndChannel } from '@/types/sale';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { Edit2, MoreVertical, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function SalesListItem({ sale }: Props) {
+  const router = useRouter();
   const { openAlert } = useAlert();
   const { handleAxiosError } = useAxiosError();
   const { toast } = useToast();
@@ -38,8 +40,11 @@ export default function SalesListItem({ sale }: Props) {
             description: '판매 내역 삭제 성공',
             variant: 'success',
           });
+          router.refresh();
+          return true;
         } catch (e) {
           handleAxiosError(e);
+          return false;
         }
       },
     });
