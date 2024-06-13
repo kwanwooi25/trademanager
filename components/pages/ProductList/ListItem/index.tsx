@@ -20,6 +20,7 @@ import { isValidUrl } from '@/lib/string';
 import { ProductWithOptions } from '@/types/product';
 import { ProductOption } from '@prisma/client';
 import axios from 'axios';
+import { differenceInDays } from 'date-fns';
 import { Edit2, ExternalLink, MoreVertical, ScrollText, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -71,10 +72,29 @@ export default function ProductListItem({ product }: Props) {
   const hasPurchaseUrl = isValidUrl(purchaseAt);
 
   return (
-    <li className="px-4 py-2 grid items-center gap-4 grid-cols-[3fr_auto_2fr_1fr_1fr_1fr_1fr_40px] border-b">
+    <li className="px-4 py-2 grid items-center gap-4 grid-cols-[3fr_auto_2fr_1fr_1fr_1fr_1fr_1fr_40px] border-b">
       {options.map((option, index) => {
-        const { id, imageUrl, name, currency, unitPrice, inventoryQuantity, leadtime, location } =
-          option;
+        const {
+          id,
+          imageUrl,
+          name,
+          currency,
+          unitPrice,
+          leadtime,
+          location,
+          inventoryChanges,
+          sales,
+        } = option;
+
+        const inventoryQuantity = inventoryChanges.reduce(
+          (sum, inventoryChange) => sum + inventoryChange.quantity,
+          0,
+        );
+        const recentSalesQuantity = sales.reduce((sum, sale) => {
+          const difference = differenceInDays(new Date(), sale.soldAt);
+          if (difference > 30) return sum;
+          return sum + sale.quantity;
+        }, 0);
 
         return (
           <Fragment key={id}>
@@ -104,10 +124,13 @@ export default function ProductListItem({ product }: Props) {
             <span className="text-right">
               {inventoryQuantity ? inventoryQuantity.toLocaleString() : '-'}
             </span>
+            <span className="text-right">
+              {recentSalesQuantity ? recentSalesQuantity.toLocaleString() : '-'}
+            </span>
             <span className="text-right">{leadtime ? `${leadtime}일` : '-'}</span>
             <span className="text-right">{location ? location : '-'}</span>
 
-            <PurchaseOrderFormDialog mode="ADD_ORDERS" productOptionId={id} customTrigger>
+            <PurchaseOrderFormDialog productOptionId={id} customTrigger>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button className="ml-auto" size="icon" variant="ghost">

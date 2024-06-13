@@ -13,7 +13,7 @@ export async function getProducts({
 }) {
   const session = await auth();
   const companyId = session?.user?.companyId;
-  
+
   if (!companyId) {
     return {
       totalCount: 0,
@@ -21,20 +21,20 @@ export async function getProducts({
       products: [],
     };
   }
-  
+
   const where = { companyId, name: { contains: search } };
-  
-  const [ count, products ] = await Promise.all([
+
+  const [count, products] = await prisma.$transaction([
     prisma.product.count({ where }),
     prisma.product.findMany({
       where,
       skip: (page - 1) * per,
       take: per,
-      orderBy: { createdAt: 'asc' },
-      include: { options: true },
+      orderBy: [{ code: 'desc' }, { createdAt: 'desc' }],
+      include: { options: { include: { inventoryChanges: true, sales: true } } },
     }),
   ]);
-  
+
   return {
     totalCount: count,
     lastPage: Math.ceil(count / per),
