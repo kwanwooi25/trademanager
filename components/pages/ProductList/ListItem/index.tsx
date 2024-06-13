@@ -69,7 +69,6 @@ export default function ProductListItem({ product }: Props) {
 
   const { purchaseAt, options } = product;
   const hasPurchaseUrl = isValidUrl(purchaseAt);
-  const productName = product.code ? `[${product.code}] ${product.name}` : product.name;
 
   return (
     <li className="px-4 py-2 grid items-center gap-4 grid-cols-[3fr_auto_2fr_1fr_1fr_1fr_1fr_40px] border-b">
@@ -80,12 +79,15 @@ export default function ProductListItem({ product }: Props) {
         return (
           <Fragment key={id}>
             {index === 0 && (
-              <span
-                className="self-start text-lg font-bold"
+              <div
+                className="self-start text-base font-bold"
                 style={{ gridRow: `span ${options.length}` }}
               >
-                {productName}
-              </span>
+                {product.code && (
+                  <span className="font-bold text-sm opacity-50">{product.code}</span>
+                )}
+                <span className="line-clamp-1">{product.name}</span>
+              </div>
             )}
             <ProductImage imageUrl={imageUrl} size={60} />
             <span className="text-base font-bold">{name}</span>
