@@ -1,6 +1,7 @@
 'use client';
 
 import ProductImage from '@/components/ProductImage';
+import { createLabel } from '@/components/ProductOptionSelect/utils';
 import SaleFormDialog from '@/components/forms/SaleFormDialog';
 import { Button } from '@/components/ui/button';
 import { DialogTrigger } from '@/components/ui/dialog';
@@ -51,11 +52,15 @@ export default function SalesListItem({ sale }: Props) {
   };
 
   return (
-    <li className="px-4 py-2 grid items-center gap-4 grid-cols-[100px_2fr_60px_1fr_100px_100px_40px] border-b p-2">
+    <li className="px-4 py-2 grid items-center gap-4 grid-cols-[1fr_60px_4fr_1fr_1fr_40px] border-b p-2">
       <span className="text-center">{format(soldAt, 'yyyy-MM-dd')}</span>
-      <span>{productOption.product.name}</span>
       <ProductImage imageUrl={productOption.imageUrl ?? ''} size={60} />
-      <span>{productOption.name}</span>
+      <div className="flex flex-col items-start">
+        {productOption.product.code && (
+          <span className="font-bold text-sm opacity-50">{productOption.product.code}</span>
+        )}
+        <span className="line-clamp-1">{createLabel(productOption)}</span>
+      </div>
       <span className="text-center">{quantity.toLocaleString()}</span>
       <span className="text-center">{channel.name}</span>
 

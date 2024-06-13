@@ -35,7 +35,7 @@ export default function ProductOptionSelect({ value, onChange }: Props) {
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button
-          className="w-auto justify-between my-2"
+          className="max-w-[190px] overflow-hidden justify-between my-2"
           variant={'outline'}
           role="combobox"
           aria-expanded={isOpen}

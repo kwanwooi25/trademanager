@@ -7,7 +7,7 @@ export default function ProductOptionSelectItem({ productOption, isSelected }: P
   if (!productOption) return null;
 
   return (
-    <div className={cn('flex items-center gap-2')}>
+    <div className={cn('flex items-center gap-2 overflow-hidden')}>
       <Image
         className="rounded-md"
         src={productOption.imageUrl ?? ''}
@@ -15,7 +15,9 @@ export default function ProductOptionSelectItem({ productOption, isSelected }: P
         width={32}
         height={32}
       />
-      <span className={cn(isSelected && 'font-bold')}>{createLabel(productOption)}</span>
+      <span className={cn('text-ellipsis', isSelected && 'font-bold')}>
+        {createLabel(productOption)}
+      </span>
     </div>
   );
 }
