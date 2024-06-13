@@ -14,7 +14,10 @@ export async function DELETE(req: NextRequest, { params: { id } }: { params: { i
   }
 
   try {
-    await prisma.sale.delete({ where: { id } });
+    await prisma.$transaction([
+      prisma.sale.delete({ where: { id } }),
+      prisma.inventoryChange.deleteMany({ where: { saleId: id } }),
+    ]);
     return handleSuccess({ data: null });
   } catch (e) {
     return handlePrismaClientError(e);

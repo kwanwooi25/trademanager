@@ -1,6 +1,7 @@
 import { SaleFormSchema } from '@/components/forms/SaleFormDialog/formSchema';
 import { getUserFromSession, handlePrismaClientError, handleSuccess } from '@/lib/api';
 import { prisma } from '@/lib/prisma';
+import { InventoryChangeType } from '@prisma/client';
 import { HttpStatusCode } from 'axios';
 import { NextRequest } from 'next/server';
 
@@ -9,10 +10,35 @@ export async function POST(req: NextRequest) {
 
   try {
     const sales: SaleFormSchema['sales'] = await req.json();
-    const { count } = await prisma.sale.createMany({
-      data: sales.map((sale) => ({ ...sale, companyId: user?.companyId! })),
+    await prisma.$transaction(async (tx) => {
+      await Promise.all(
+        sales.map(async (sale) => {
+          const inventoryChange = await tx.inventoryChange.create({
+            data: {
+              type: InventoryChangeType.SALE,
+              quantity: -sale.quantity,
+              productOptionId: sale.productOptionId,
+              companyId: user?.companyId!,
+            },
+          });
+          const createdSale = await tx.sale.create({
+            data: {
+              ...sale,
+              inventoryChangeId: inventoryChange.id,
+              companyId: user?.companyId!,
+            },
+          });
+          await tx.inventoryChange.update({
+            where: { id: inventoryChange.id },
+            data: {
+              saleId: createdSale.id,
+            },
+          });
+          return createdSale;
+        }),
+      );
     });
-    return handleSuccess({ data: count, status: HttpStatusCode.Created });
+    return handleSuccess({ data: sales.length, status: HttpStatusCode.Created });
   } catch (e) {
     return handlePrismaClientError(e);
   }
