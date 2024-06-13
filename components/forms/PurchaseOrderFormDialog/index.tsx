@@ -37,7 +37,6 @@ import { PurchaseOrderFormSchema, formSchema } from './formSchema';
 import { getDefaultFormValues } from './utils';
 
 export default function PurchaseOrderFormDialog({
-  mode = 'ADD_ORDERS',
   purchaseOrders = [],
   productOptionId,
   children,
@@ -69,12 +68,7 @@ export default function PurchaseOrderFormDialog({
   };
 
   const isEditing = !!purchaseOrders.length;
-  const title = (() => {
-    if (!isEditing || mode === 'ADD_ORDERS') return '주문 입력';
-    if (mode === 'EDIT_ORDERS') return '주문 수정';
-    if (mode === 'RECEIVE_ORDERS') return '입고 완료 처리';
-    return '주문 입력';
-  })();
+  const title = isEditing ? '주문 수정' : '주문 입력';
 
   const submitForm = form.handleSubmit(async (values: PurchaseOrderFormSchema) => {
     try {
@@ -139,35 +133,17 @@ export default function PurchaseOrderFormDialog({
                       </FormItem>
                     )}
                   />
-                  {mode === 'RECEIVE_ORDERS' ? (
-                    <>
-                      <DateFormField
-                        control={form.control}
-                        name={`purchaseOrders.${index}.receivedAt`}
-                        label="입고일"
-                      />
-                      <InputFormField
-                        control={form.control}
-                        name={`purchaseOrders.${index}.receivedQuantity`}
-                        label="입고수량"
-                        inputProps={{ format: 'thousandSeparator' }}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <DateFormField
-                        control={form.control}
-                        name={`purchaseOrders.${index}.orderedAt`}
-                        label="주문일"
-                      />
-                      <InputFormField
-                        control={form.control}
-                        name={`purchaseOrders.${index}.orderedQuantity`}
-                        label="주문수량"
-                        inputProps={{ format: 'thousandSeparator' }}
-                      />
-                    </>
-                  )}
+                  <DateFormField
+                    control={form.control}
+                    name={`purchaseOrders.${index}.orderedAt`}
+                    label="주문일"
+                  />
+                  <InputFormField
+                    control={form.control}
+                    name={`purchaseOrders.${index}.orderedQuantity`}
+                    label="주문수량"
+                    inputProps={{ format: 'thousandSeparator' }}
+                  />
                   <Button
                     className={cn('mt-[32px]', isEditing && 'hidden')}
                     onClick={removePurchaseOrder(index)}
@@ -205,7 +181,6 @@ export default function PurchaseOrderFormDialog({
 PurchaseOrderFormDialog.Trigger = DialogTrigger;
 
 type Props = PropsWithChildren<{
-  mode?: 'ADD_ORDERS' | 'EDIT_ORDERS' | 'RECEIVE_ORDERS';
   productOptionId?: string;
   purchaseOrders?: PurchaseOrderWithProductOption[];
   customTrigger?: boolean;

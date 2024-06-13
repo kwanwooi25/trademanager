@@ -54,8 +54,6 @@ export async function PATCH(req: NextRequest) {
       WHERE "PurchaseOrder".id = x.id
       `;
 
-    console.log(sql);
-
     const res = await prisma.$executeRawUnsafe(sql);
     return handleSuccess({ data: res });
   } catch (e) {
