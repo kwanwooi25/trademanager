@@ -2,6 +2,7 @@
 
 import ProductImage from '@/components/ProductImage';
 import PurchaseOrderFormDialog from '@/components/forms/PurchaseOrderFormDialog';
+import StocktakingFormDialog from '@/components/forms/StocktakingFormDialog';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -21,7 +22,7 @@ import { ProductWithOptions } from '@/types/product';
 import { ProductOption } from '@prisma/client';
 import axios from 'axios';
 import { differenceInDays } from 'date-fns';
-import { Edit2, ExternalLink, MoreVertical, ScrollText, Trash2 } from 'lucide-react';
+import { Edit2, ExternalLink, MoreVertical, PackageOpen, ScrollText, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Fragment } from 'react';
@@ -131,52 +132,61 @@ export default function ProductListItem({ product }: Props) {
             <span className="text-right">{location ? location : '-'}</span>
 
             <PurchaseOrderFormDialog productOptionId={id} customTrigger>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button className="ml-auto" size="icon" variant="ghost">
-                    <MoreVertical />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>
-                    {product.name} / {name}
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href={editProductUrl}>
-                      <Edit2 className="mr-2 h-4 w-4" />
-                      <span>상품 수정</span>
-                    </Link>
-                  </DropdownMenuItem>
-
-                  <PurchaseOrderFormDialog.Trigger asChild>
-                    <DropdownMenuItem>
-                      <ScrollText className="mr-2 h-4 w-4" />
-                      <span>주문 입력</span>
+              <StocktakingFormDialog productOptionId={id} customTrigger>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button className="ml-auto" size="icon" variant="ghost">
+                      <MoreVertical />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>
+                      {product.name} / {name}
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href={editProductUrl}>
+                        <Edit2 className="mr-2 h-4 w-4" />
+                        <span>상품 수정</span>
+                      </Link>
                     </DropdownMenuItem>
-                  </PurchaseOrderFormDialog.Trigger>
 
-                  <DropdownMenuItem
-                    onClick={handleClickDelete(option)}
-                    className="text-destructive"
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    <span>옵션 삭제</span>
-                  </DropdownMenuItem>
-
-                  {hasPurchaseUrl && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <Link href={purchaseAt} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="mr-2 h-4 w-4" />
-                          <span>구매처</span>
-                        </Link>
+                    <PurchaseOrderFormDialog.Trigger asChild>
+                      <DropdownMenuItem>
+                        <ScrollText className="mr-2 h-4 w-4" />
+                        <span>주문 입력</span>
                       </DropdownMenuItem>
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    </PurchaseOrderFormDialog.Trigger>
+
+                    <StocktakingFormDialog.Trigger asChild>
+                      <DropdownMenuItem>
+                        <PackageOpen className="mr-2 h-4 w-4" />
+                        <span>재고 수량 조정</span>
+                      </DropdownMenuItem>
+                    </StocktakingFormDialog.Trigger>
+
+                    <DropdownMenuItem
+                      onClick={handleClickDelete(option)}
+                      className="text-destructive"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      <span>옵션 삭제</span>
+                    </DropdownMenuItem>
+
+                    {hasPurchaseUrl && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link href={purchaseAt} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="mr-2 h-4 w-4" />
+                            <span>구매처</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </StocktakingFormDialog>
             </PurchaseOrderFormDialog>
           </Fragment>
         );

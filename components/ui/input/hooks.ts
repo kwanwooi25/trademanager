@@ -14,7 +14,7 @@ const defaultFormatRemover = (value: string) => value;
 export const useFormatter = ({ format, maxLength }: { format?: Format; maxLength?: number }) => {
   const { format: numericFormat, removeFormatting: removeNumericFormat } = useNumericFormat({
     thousandSeparator: format === 'thousandSeparator',
-    allowNegative: false,
+    allowNegative: format === 'numberOnly',
     maxLength,
   });
 
