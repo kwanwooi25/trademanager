@@ -39,8 +39,8 @@ export default function ProductListItem({ product }: Props) {
   const router = useRouter();
   const currentUrl = useCurrentUrl();
   const { handleAxiosError } = useAxiosError();
-  const { purchasedAt, options } = product;
-  const hasPurchaseUrl = isValidUrl(purchasedAt);
+  const { purchaseAt, options } = product;
+  const hasPurchaseUrl = isValidUrl(purchaseAt);
 
   const editProductUrl = `${PATHS.EDIT_PRODUCT}/${product.id}?callbackUrl=${currentUrl}`;
 
@@ -125,7 +125,7 @@ export default function ProductListItem({ product }: Props) {
                       <>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
-                          <Link href={purchasedAt} target="_blank" rel="noopener noreferrer">
+                          <Link href={purchaseAt} target="_blank" rel="noopener noreferrer">
                             <ExternalLink className="mr-2 h-4 w-4" />
                             <span>구매처</span>
                           </Link>

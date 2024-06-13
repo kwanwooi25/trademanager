@@ -4,7 +4,7 @@ import { CountrySchema, CurrencySchema, ProductOptionStatusSchema } from '@/pris
 export const formSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, { message: '상품명을 입력해주세요' }),
-  purchasedAt: z.string().min(1, { message: '구매처를 입력해주세요' }),
+  purchaseAt: z.string().min(1, { message: '구매처를 입력해주세요' }),
   options: z.array(
     z.object({
       id: z.string().optional(),

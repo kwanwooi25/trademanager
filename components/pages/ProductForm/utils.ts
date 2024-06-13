@@ -6,7 +6,7 @@ export function getDefaultFormValues(product?: ProductWithOptions | null): Produ
   if (!product) {
     return {
       name: '',
-      purchasedAt: '',
+      purchaseAt: '',
       options: [{ ...DEFAULT_PRODUCT_OPTION }],
     };
   }

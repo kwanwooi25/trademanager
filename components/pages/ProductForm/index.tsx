@@ -124,7 +124,7 @@ export default function ProductFormPage({ product }: Props) {
           />
           <FormField
             control={form.control}
-            name="purchasedAt"
+            name="purchaseAt"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>구매처</FormLabel>
