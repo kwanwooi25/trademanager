@@ -18,7 +18,7 @@ export default function ProductListSkeleton() {
         </div>
 
         <ul className="flex flex-col">
-          <li className="px-4 py-6 grid items-center gap-4 grid-cols-[2fr_auto_2fr_1fr_1fr_1fr_1fr_40px] text-sm font-semibold border-y">
+          <li className="px-4 py-6 grid items-center gap-4 grid-cols-[3fr_auto_2fr_1fr_1fr_1fr_1fr_40px] text-sm font-semibold border-y">
             <Skeleton className="h-5" />
             <span className="w-[60px]"></span>
             <Skeleton className="h-5" />
@@ -33,7 +33,7 @@ export default function ProductListSkeleton() {
             .map((_, i) => (
               <li
                 key={i}
-                className="px-4 py-2 grid items-center gap-4 grid-cols-[2fr_auto_2fr_1fr_1fr_1fr_1fr_40px] border-b p-2"
+                className="px-4 py-2 grid items-center gap-4 grid-cols-[3fr_auto_2fr_1fr_1fr_1fr_1fr_40px] border-b p-2"
               >
                 <Skeleton className="h-7" />
                 <Skeleton className="h-[60px] w-[60px]" />

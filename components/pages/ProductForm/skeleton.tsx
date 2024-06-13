@@ -9,7 +9,10 @@ export default function ProductFormSkeleton() {
         <Skeleton className="h-10 w-20" />
       </PageHeader>
       <PageBody className="flex flex-col gap-4">
-        <Skeleton.Input />
+        <div className="grid grid-cols-[2fr_1fr] gap-4">
+          <Skeleton.Input />
+          <Skeleton.Input />
+        </div>
         <Skeleton.Input />
         <div className="pl-8 flex flex-col gap-4">
           <div className="flex items-center justify-between">

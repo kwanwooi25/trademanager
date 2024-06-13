@@ -6,15 +6,7 @@ import ProductOptionForm from '@/components/pages/ProductForm/ProductOptionForm'
 import { DEFAULT_PRODUCT_OPTION } from '@/components/pages/ProductForm/const';
 import { formSchema, type ProductFormSchema } from '@/components/pages/ProductForm/formSchema';
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Form, InputFormField } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
 import { API_ROUTE, PATHS } from '@/const/paths';
 import { useAxiosError } from '@/hooks/useAxiosError';
@@ -109,32 +101,22 @@ export default function ProductFormPage({ product }: Props) {
           </Button>
         </PageHeader>
         <PageBody className="flex flex-col gap-4">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>상품명</FormLabel>
-                <FormControl>
-                  <Input {...field} autoFocus />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
+          <div className="grid grid-cols-[2fr_1fr] gap-4">
+            <InputFormField
+              control={form.control}
+              name="name"
+              label="상품명"
+              inputProps={{ autoFocus: true }}
+            />
+            <InputFormField control={form.control} name="code" label="상품코드" />
+          </div>
+          <InputFormField
             control={form.control}
             name="purchaseAt"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>구매처</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="URL 또는 명칭" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="구매처"
+            inputProps={{ placeholder: 'URL 또는 명칭' }}
           />
+
           <div className={'pl-8 flex flex-col gap-4'}>
             <div className={'flex items-center justify-between'}>
               <h5 className={'text-lg'}>
