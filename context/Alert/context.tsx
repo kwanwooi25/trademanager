@@ -54,7 +54,9 @@ export function AlertProvider({ children }: PropsWithChildren) {
             )}
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{alertProps.cancelLabel}</AlertDialogCancel>
+            <AlertDialogCancel onClick={alertProps.onCancel}>
+              {alertProps.cancelLabel}
+            </AlertDialogCancel>
             <Button type="button" onClick={handleClickAction} disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {alertProps.actionLabel}

@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Form, InputFormField } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
 import { API_ROUTE, PATHS } from '@/const/paths';
+import { useAlert } from '@/context/Alert';
 import { useAxiosError } from '@/hooks/useAxiosError';
 import { useCallbackUrl } from '@/hooks/useCallbackUrl';
 import { SuccessResponse } from '@/types/api';
@@ -28,6 +29,7 @@ export default function ProductFormPage({ product }: Props) {
   const getCallbackUrl = useCallbackUrl();
   const { toast } = useToast();
   const { handleAxiosError } = useAxiosError();
+  const { openAlert } = useAlert();
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<ProductFormSchema>({
     resolver: zodResolver(formSchema),
@@ -52,15 +54,33 @@ export default function ProductFormPage({ product }: Props) {
         },
       });
 
-      toast({
+      if (isEditing) {
+        toast({
+          description: (
+            <p>
+              {title} 완료 (<b>{data.data.name}</b>)
+            </p>
+          ),
+          variant: 'success',
+        });
+        router.replace(callbackUrl);
+        return;
+      }
+
+      openAlert({
+        title: `${title} 완료!`,
         description: (
-          <p>
-            {title} 성공 (<b>{data.data.name}</b>)
-          </p>
+          <>
+            상품(<b>{data.data.name}</b>)을 등록했습니다.
+            <br />
+            계속해서 다른 상품을 등록하시겠습니까?
+          </>
         ),
-        variant: 'success',
+        cancelLabel: '목록으로 돌아가기',
+        onCancel: () => router.replace(callbackUrl),
+        actionLabel: '다른 상품 등록하기',
+        action: () => form.reset(getDefaultFormValues()),
       });
-      router.replace(callbackUrl);
     } catch (error) {
       handleAxiosError(error);
     } finally {
