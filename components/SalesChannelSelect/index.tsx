@@ -1,10 +1,7 @@
-import { API_ROUTE } from '@/const/paths';
+import { useSelectOptions } from '@/context/SelectOptions';
 import { cn } from '@/lib/utils';
-import { SuccessResponse } from '@/types/api';
-import { SalesChannel } from '@prisma/client';
-import axios from 'axios';
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '../ui/button';
 import {
   Command,
@@ -18,15 +15,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import SalesChannelSelectItem from './SelectItem';
 
 export default function SalesChannelSelect({ value, onChange }: Props) {
-  const [salesChannels, setSalesChannels] = useState<SalesChannel[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const { data } = await axios.get<SuccessResponse<SalesChannel[]>>(API_ROUTE.SALES_CHANNEL);
-      setSalesChannels(data.data);
-    })();
-  }, []);
+  const { salesChannels } = useSelectOptions();
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
