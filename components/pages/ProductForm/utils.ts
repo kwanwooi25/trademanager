@@ -11,9 +11,10 @@ export function getDefaultFormValues(product?: ProductWithOptions | null): Produ
     };
   }
 
-  const { options, ...rest } = product;
+  const { options, code, ...rest } = product;
 
   return {
+    code: code ?? undefined,
     ...rest,
     options: options.map(({ imageUrl, location, ...option }) => ({
       imageUrl: imageUrl ?? undefined,

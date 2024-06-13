@@ -8,5 +8,8 @@ export async function getProductById(id: string) {
     return null;
   }
 
-  return await prisma.product.findUnique({ where: { companyId, id }, include: { options: true } });
+  return await prisma.product.findUnique({
+    where: { companyId, id },
+    include: { options: { include: { inventoryChanges: true, sales: true } } },
+  });
 }
