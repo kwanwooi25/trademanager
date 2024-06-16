@@ -39,15 +39,7 @@ export default function ProductOptionImageForm({ imageFile, imageUrl, onChange, 
       label={
         <div className="flex flex-col items-center gap-2 py-6">
           <LucideFileUp />
-          <p className="text-center text-xs">
-            <span className="text-sm font-bold">Drag & Drop</span>
-            <br />
-            또는
-            <br />
-            <span className="text-sm font-bold">클릭</span>하여
-            <br />
-            이미지 업로드
-          </p>
+          <p className="text-center text-xs">이미지</p>
         </div>
       }
       accept={{

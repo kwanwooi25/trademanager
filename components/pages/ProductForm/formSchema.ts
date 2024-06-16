@@ -1,5 +1,5 @@
+import { CountrySchema, ProductOptionStatusSchema } from '@/prisma/generated/zod';
 import { z } from 'zod';
-import { CountrySchema, CurrencySchema, ProductOptionStatusSchema } from '@/prisma/generated/zod';
 
 export const formSchema = z.object({
   id: z.string().optional(),
@@ -15,22 +15,9 @@ export const formSchema = z.object({
         .refine((file) => file?.type.includes('image'), '이미지 파일만 업로드 가능합니다')
         .optional(),
       imageUrl: z.string().url().optional(),
-      unitPrice: z
-        .union([z.string(), z.number()])
-        .transform((v) => +v)
-        .optional(),
-      currency: CurrencySchema,
       importedFrom: CountrySchema,
-      inventoryQuantity: z
-        .union([z.string(), z.number()])
-        .transform((v) => +v)
-        .optional(),
-      leadtime: z
-        .union([z.string(), z.number()])
-        .transform((v) => +v)
-        .optional(),
       status: ProductOptionStatusSchema,
-      location: z.string().optional(),
+      storageLocation: z.string().optional(),
     }),
   ),
   optionIdsToDelete: z.array(z.string()).optional(),

@@ -17,9 +17,6 @@ export async function POST(req: NextRequest) {
         options.map(async ({ imageFile, ...option }) => {
           const optionToCreate = {
             ...option,
-            unitPrice: option.unitPrice ? +option.unitPrice : 0,
-            inventoryQuantity: option.inventoryQuantity ? +option.inventoryQuantity : 0,
-            leadtime: option.leadtime ? +option.leadtime : 0,
             companyId: user?.companyId!,
           };
           if (!imageFile) {
@@ -70,9 +67,6 @@ export async function PATCH(req: NextRequest) {
         options.map(async ({ imageFile, ...option }) => {
           const optionToCreateOrUpdate = {
             ...option,
-            unitPrice: option.unitPrice ? +option.unitPrice : 0,
-            inventoryQuantity: option.inventoryQuantity ? +option.inventoryQuantity : 0,
-            leadtime: option.leadtime ? +option.leadtime : 0,
           };
 
           if (!option.id) {

@@ -1,8 +1,5 @@
 import ProductOptionImageForm from '@/components/pages/ProductForm/ProductOptionImageForm';
-import {
-  COUNTRY_SELECT_OPTIONS,
-  CURRENCY_SELECT_OPTIONS,
-} from '@/components/pages/ProductForm/const';
+import { COUNTRY_SELECT_OPTIONS } from '@/components/pages/ProductForm/const';
 import type { ProductFormSchema } from '@/components/pages/ProductForm/formSchema';
 import { Button } from '@/components/ui/button';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -35,7 +32,7 @@ export default function ProductOptionForm({ index, option, onUpdate, onRemove }:
   return (
     <div
       className={
-        'relative p-4 pt-8 border border-accent rounded-md gap-4 grid grid-cols-[auto_2fr_1fr]'
+        'relative p-4 pt-8 border border-accent rounded-md gap-4 grid grid-cols-[auto_1fr]'
       }
     >
       <Button
@@ -48,7 +45,7 @@ export default function ProductOptionForm({ index, option, onUpdate, onRemove }:
       >
         <LucideX />
       </Button>
-      <div className={'w-56 h-56'}>
+      <div className="w-[100px] h-[100px]">
         <ProductOptionImageForm
           imageFile={form.getValues('options')[index]?.imageFile}
           imageUrl={form.getValues('options')[index]?.imageUrl}
@@ -56,7 +53,7 @@ export default function ProductOptionForm({ index, option, onUpdate, onRemove }:
           onRemove={handleImageRemove}
         />
       </div>
-      <div className={'flex flex-col gap-2'}>
+      <div className={'grid grid-cols-[2fr_1fr_2fr] gap-2'}>
         <FormField
           control={form.control}
           name={`options.${index}.name`}
@@ -70,45 +67,6 @@ export default function ProductOptionForm({ index, option, onUpdate, onRemove }:
             </FormItem>
           )}
         />
-        <div className={'flex gap-2'}>
-          <FormField
-            control={form.control}
-            name={`options.${index}.currency`}
-            render={({ field }) => (
-              <FormItem className={'flex-1'}>
-                <FormLabel>화폐 단위</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder={'화폐 단위 선택'} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {CURRENCY_SELECT_OPTIONS.map(({ value, label }) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name={`options.${index}.unitPrice`}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>단가</FormLabel>
-                <FormControl>
-                  <Input {...field} format={'numberOnly'} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
         <FormField
           control={form.control}
           name={`options.${index}.importedFrom`}
@@ -133,37 +91,9 @@ export default function ProductOptionForm({ index, option, onUpdate, onRemove }:
             </FormItem>
           )}
         />
-      </div>
-      <div className={'flex flex-col gap-2'}>
         <FormField
           control={form.control}
-          name={`options.${index}.inventoryQuantity`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>수량</FormLabel>
-              <FormControl>
-                <Input {...field} format={'numberOnly'} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name={`options.${index}.leadtime`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>입고소요일</FormLabel>
-              <FormControl>
-                <Input {...field} format={'numberOnly'} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name={`options.${index}.location`}
+          name={`options.${index}.storageLocation`}
           render={({ field }) => (
             <FormItem>
               <FormLabel>보관 위치</FormLabel>
