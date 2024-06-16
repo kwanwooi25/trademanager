@@ -26,15 +26,13 @@ model User {
   emailVerified DateTime?
   password      String?
   image         String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   companyId String?
-  company   Company? @relation(fields: [companyId], references: [id])
-
-  accounts Account[]
-  sessions Session[]
+  company   Company?  @relation(fields: [companyId], references: [id])
+  accounts  Account[]
+  sessions  Session[]
 }
 
 model Account {
@@ -49,9 +47,8 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -62,9 +59,8 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -78,109 +74,107 @@ model Company {
   repName        String
   repMobile      String
   certificateUrl String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  users            User[]
-  products         Product[]
-  productOptions   ProductOption[]
-  purchaseOrders   PurchaseOrder[]
-  sales            Sale[]
-  salesChannels    SalesChannel[]
-  inventoryChanges InventoryChange[]
+  users              User[]
+  products           Product[]
+  productOptions     ProductOption[]
+  purchaseOrders     PurchaseOrder[]
+  purchaseOrderItems PurchaseOrderItem[]
+  sales              Sale[]
+  salesChannels      SalesChannel[]
+  inventoryChanges   InventoryChange[]
 }
 
 model Product {
-  id         String  @id @default(cuid())
+  id         String   @id @default(cuid())
   code       String?
   name       String
   purchaseAt String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   companyId String
-
-  company Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  options ProductOption[]
+  company   Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  options   ProductOption[]
 }
 
 model ProductOption {
-  id                String              @id @default(cuid())
-  name              String
-  imageUrl          String?
-  unitPrice         Float               @default(0)
-  currency          Currency            @default(CNY)
-  importedFrom      Country             @default(CN)
-  inventoryQuantity Int                 @default(0)
-  leadtime          Int                 @default(21)
-  status            ProductOptionStatus @default(ON_SALE)
-  location          String?
+  id              String              @id @default(cuid())
+  name            String
+  imageUrl        String?
+  importedFrom    Country             @default(CN)
+  status          ProductOptionStatus @default(ON_SALE)
+  storageLocation String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  productId String
-  companyId String
-
-  product          Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
-  company          Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  purchaseOrders   PurchaseOrder[]
+  companyId        String
+  company          Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  productId        String
+  product          Product             @relation(fields: [productId], references: [id], onDelete: Cascade)
+  purchases        PurchaseOrderItem[]
   sales            Sale[]
   inventoryChanges InventoryChange[]
 }
 
 model PurchaseOrder {
-  id               String              @id @default(cuid())
-  orderedQuantity  Int                 @default(0)
-  orderedAt        DateTime
-  receivedQuantity Int?                @default(0)
-  receivedAt       DateTime?
-  status           PurchaseOrderStatus @default(ORDERED)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  productOptionId String
-  companyId       String
-
-  productOption    ProductOption     @relation(fields: [productOptionId], references: [id], onDelete: Cascade)
-  company          Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  inventoryChanges InventoryChange[]
-}
-
-model Sale {
-  id       String   @id @default(cuid())
-  quantity Int      @default(0)
-  soldAt   DateTime
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  productOptionId   String
-  channelId         String
-  companyId         String
-  inventoryChangeId String @unique
-
-  productOption   ProductOption   @relation(fields: [productOptionId], references: [id], onDelete: Cascade)
-  channel         SalesChannel    @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  company         Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  inventoryChange InventoryChange @relation(fields: [inventoryChangeId], references: [id], onDelete: Cascade)
-}
-
-model SalesChannel {
-  id   String  @id @default(cuid())
-  name String
-  url  String?
-
+  id        String   @id @default(cuid())
+  orderedAt DateTime
+  name      String   @default("")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   companyId String
+  company   Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  items     PurchaseOrderItem[]
+}
 
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  sales   Sale[]
+model PurchaseOrderItem {
+  id               String    @id @default(cuid())
+  orderedQuantity  Int       @default(0)
+  receivedAt       DateTime?
+  receivedQuantity Int?      @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  companyId       String
+  company         Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  productOptionId String
+  productOption   ProductOption     @relation(fields: [productOptionId], references: [id], onDelete: Cascade)
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder     @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  inventoryChange InventoryChange[]
+}
+
+model Sale {
+  id        String   @id @default(cuid())
+  quantity  Int      @default(0)
+  soldAt    DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyId         String
+  company           Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  productOptionId   String
+  productOption     ProductOption   @relation(fields: [productOptionId], references: [id], onDelete: Cascade)
+  channelId         String
+  channel           SalesChannel    @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  inventoryChangeId String          @unique
+  inventoryChange   InventoryChange @relation(fields: [inventoryChangeId], references: [id], onDelete: Cascade)
+}
+
+model SalesChannel {
+  id        String   @id @default(cuid())
+  name      String
+  url       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  sales     Sale[]
 }
 
 model InventoryChange {
@@ -189,26 +183,19 @@ model InventoryChange {
   quantity Int                 @default(0)
 
   productOptionId String
+  productOption   ProductOption      @relation(fields: [productOptionId], references: [id], onDelete: Cascade)
   companyId       String
-  purchaseOrderId String?
+  company         Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  purchaseId      String?
+  purchase        PurchaseOrderItem? @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
   saleId          String?
-
-  productOption ProductOption  @relation(fields: [productOptionId], references: [id], onDelete: Cascade)
-  company       Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  purchaseOrder PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
-  sale          Sale?
+  sale            Sale?
 }
 
 enum InventoryChangeType {
   STORAGE
-  CANCEL_STORAGE
   SALE
   STOCKTAKING
-}
-
-enum PurchaseOrderStatus {
-  ORDERED
-  RECEIVED
 }
 
 enum ProductOptionStatus {
