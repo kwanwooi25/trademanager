@@ -1,8 +1,6 @@
 'use client';
 
 import ProductImage from '@/components/ProductImage';
-import PurchaseOrderFormDialog from '@/components/forms/PurchaseOrderFormDialog';
-import StocktakingFormDialog from '@/components/forms/StocktakingFormDialog';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -15,6 +13,8 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import { API_ROUTE, PATHS } from '@/const/paths';
 import { useAlert } from '@/context/Alert';
+import { useFormDialog } from '@/context/FormDialog';
+import { useSelectOptions } from '@/context/SelectOptions';
 import { useAxiosError } from '@/hooks/useAxiosError';
 import { useCurrentUrl } from '@/hooks/useCurrentUrl';
 import { isValidUrl } from '@/lib/string';
@@ -22,7 +22,7 @@ import { ProductWithOptions } from '@/types/product';
 import { ProductOption } from '@prisma/client';
 import axios from 'axios';
 import { differenceInDays } from 'date-fns';
-import { Edit2, ExternalLink, MoreVertical, PackageOpen, ScrollText, Trash2 } from 'lucide-react';
+import { Edit2, ExternalLink, MoreVertical, PackageOpen, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Fragment } from 'react';
@@ -33,8 +33,19 @@ export default function ProductListItem({ product }: Props) {
   const currentUrl = useCurrentUrl();
   const { handleAxiosError } = useAxiosError();
   const { openAlert } = useAlert();
+  const { openForm } = useFormDialog();
+  const { productOptions } = useSelectOptions();
 
   const editProductUrl = `${PATHS.EDIT_PRODUCT}/${product.id}?callbackUrl=${currentUrl}`;
+
+  const handleClickStocktaing = (productOptionId: string) => () => {
+    openForm({
+      type: 'STOCKTAKING',
+      formProps: {
+        productOptionId,
+      },
+    });
+  };
 
   const handleClickDelete = (option: ProductOption) => () => {
     openAlert({
@@ -59,6 +70,7 @@ export default function ProductListItem({ product }: Props) {
             description: '상품 옵션 삭제 성공',
             variant: 'success',
           });
+          productOptions.refetch();
           router.refresh();
           return true;
         } catch (error) {
@@ -75,17 +87,7 @@ export default function ProductListItem({ product }: Props) {
   return (
     <li className="px-4 py-2 grid items-center gap-4 grid-cols-[3fr_auto_2fr_1fr_1fr_1fr_1fr_1fr_40px] border-b">
       {options.map((option, index) => {
-        const {
-          id,
-          imageUrl,
-          name,
-          currency,
-          unitPrice,
-          leadtime,
-          location,
-          inventoryChanges,
-          sales,
-        } = option;
+        const { id, imageUrl, name, inventoryChanges, sales } = option;
 
         const inventoryQuantity = inventoryChanges.reduce(
           (sum, inventoryChange) => sum + inventoryChange.quantity,
@@ -112,82 +114,57 @@ export default function ProductListItem({ product }: Props) {
             )}
             <ProductImage imageUrl={imageUrl} size={60} />
             <span className="text-base font-bold">{name}</span>
-            <span className="text-right">
-              {unitPrice ? (
-                <>
-                  <span className="text-xs opacity-60">{currency}</span>{' '}
-                  <span>{unitPrice.toLocaleString()}</span>
-                </>
-              ) : (
-                '-'
-              )}
-            </span>
+            <span className="text-right">-</span>
             <span className="text-right">
               {inventoryQuantity ? inventoryQuantity.toLocaleString() : '-'}
             </span>
             <span className="text-right">
               {recentSalesQuantity ? recentSalesQuantity.toLocaleString() : '-'}
             </span>
-            <span className="text-right">{leadtime ? `${leadtime}일` : '-'}</span>
-            <span className="text-right">{location ? location : '-'}</span>
+            <span className="text-right">-</span>
+            <span className="text-right">-</span>
 
-            <PurchaseOrderFormDialog productOptionId={id} customTrigger>
-              <StocktakingFormDialog productOptionId={id} customTrigger>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button className="ml-auto" size="icon" variant="ghost">
-                      <MoreVertical />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>
-                      {product.name} / {name}
-                    </DropdownMenuLabel>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="ml-auto" size="icon" variant="ghost">
+                  <MoreVertical />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>
+                  {product.name} / {name}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href={editProductUrl}>
+                    <Edit2 className="mr-2 h-4 w-4" />
+                    <span>상품 수정</span>
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem onClick={handleClickStocktaing(id)}>
+                  <PackageOpen className="mr-2 h-4 w-4" />
+                  <span>재고 수량 조정</span>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem onClick={handleClickDelete(option)} className="text-destructive">
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  <span>옵션 삭제</span>
+                </DropdownMenuItem>
+
+                {hasPurchaseUrl && (
+                  <>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link href={editProductUrl}>
-                        <Edit2 className="mr-2 h-4 w-4" />
-                        <span>상품 수정</span>
+                      <Link href={purchaseAt} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="mr-2 h-4 w-4" />
+                        <span>구매처</span>
                       </Link>
                     </DropdownMenuItem>
-
-                    <PurchaseOrderFormDialog.Trigger asChild>
-                      <DropdownMenuItem>
-                        <ScrollText className="mr-2 h-4 w-4" />
-                        <span>주문 입력</span>
-                      </DropdownMenuItem>
-                    </PurchaseOrderFormDialog.Trigger>
-
-                    <StocktakingFormDialog.Trigger asChild>
-                      <DropdownMenuItem>
-                        <PackageOpen className="mr-2 h-4 w-4" />
-                        <span>재고 수량 조정</span>
-                      </DropdownMenuItem>
-                    </StocktakingFormDialog.Trigger>
-
-                    <DropdownMenuItem
-                      onClick={handleClickDelete(option)}
-                      className="text-destructive"
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      <span>옵션 삭제</span>
-                    </DropdownMenuItem>
-
-                    {hasPurchaseUrl && (
-                      <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                          <Link href={purchaseAt} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="mr-2 h-4 w-4" />
-                            <span>구매처</span>
-                          </Link>
-                        </DropdownMenuItem>
-                      </>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </StocktakingFormDialog>
-            </PurchaseOrderFormDialog>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </Fragment>
         );
       })}

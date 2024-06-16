@@ -17,13 +17,15 @@ import { createLabel } from './utils';
 
 export default function ProductOptionSelect({ value, onChange }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const { productOptions } = useSelectOptions();
+  const {
+    productOptions: { value: productOptions },
+  } = useSelectOptions();
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button
-          className="max-w-[190px] overflow-hidden justify-between my-2"
+          className="justify-between my-2"
           variant={'outline'}
           role="combobox"
           aria-expanded={isOpen}

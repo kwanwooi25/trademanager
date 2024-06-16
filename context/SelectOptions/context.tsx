@@ -3,7 +3,7 @@ import { SuccessResponse } from '@/types/api';
 import { ProductOptionWithProduct } from '@/types/productOption';
 import { SalesChannel } from '@prisma/client';
 import axios from 'axios';
-import { PropsWithChildren, createContext, useCallback, useEffect, useState } from 'react';
+import { PropsWithChildren, createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { SelectOptionsContextState } from './types';
 
 export const SelectOptionsContext = createContext<SelectOptionsContextState | null>(null);
@@ -24,14 +24,24 @@ export function SelectOptionsProvider({ children }: PropsWithChildren) {
     setSalesChannels(data.data);
   }, []);
 
+  const value: SelectOptionsContextState = useMemo(
+    () => ({
+      productOptions: {
+        value: productOptions,
+        refetch: fetchProductOptions,
+      },
+      salesChannels: {
+        value: salesChannels,
+        refetch: fetchSalesChannels,
+      },
+    }),
+    [fetchProductOptions, fetchSalesChannels, productOptions, salesChannels],
+  );
+
   useEffect(() => {
     fetchProductOptions();
     fetchSalesChannels();
   }, [fetchProductOptions, fetchSalesChannels]);
 
-  return (
-    <SelectOptionsContext.Provider value={{ productOptions, salesChannels }}>
-      {children}
-    </SelectOptionsContext.Provider>
-  );
+  return <SelectOptionsContext.Provider value={value}>{children}</SelectOptionsContext.Provider>;
 }

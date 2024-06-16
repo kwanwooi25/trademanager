@@ -1,12 +1,11 @@
 import { getUserFromSession, handleFail, handlePrismaClientError, handleSuccess } from '@/lib/api';
 import { prisma } from '@/lib/prisma';
-import { PurchaseOrderWithProductOption } from '@/types/purchaseOrder';
-import { InventoryChangeType, PurchaseOrderStatus } from '@prisma/client';
+import { PurchaseOrderItemWithProductOption } from '@/types/purchaseOrder';
 import { HttpStatusCode } from 'axios';
 import { NextRequest } from 'next/server';
 
 export async function PATCH(req: NextRequest, { params: { id } }: { params: { id: string } }) {
-  const user = await getUserFromSession();
+  await getUserFromSession();
 
   if (!id) {
     return handleFail({
@@ -16,19 +15,21 @@ export async function PATCH(req: NextRequest, { params: { id } }: { params: { id
   }
 
   try {
-    const data: PurchaseOrderWithProductOption = await req.json();
-    const updatedPurchaseOrder = await prisma.purchaseOrder.update({
+    const data: PurchaseOrderItemWithProductOption = await req.json();
+    const updatedPurchaseOrderItem = await prisma.purchaseOrderItem.update({
       where: { id },
       data: {
         receivedAt: null,
         receivedQuantity: 0,
-        status: PurchaseOrderStatus.ORDERED,
-        inventoryChanges: {
-          create: {
-            type: InventoryChangeType.CANCEL_STORAGE,
-            quantity: -data.receivedQuantity!,
-            productOptionId: data.productOptionId,
-            companyId: user?.companyId!,
+        inventoryChange: {
+          update: {
+            where: {
+              id: data.inventoryChangeId,
+            },
+            data: {
+              ...data.inventoryChange,
+              quantity: 0,
+            },
           },
         },
       },
@@ -38,9 +39,10 @@ export async function PATCH(req: NextRequest, { params: { id } }: { params: { id
             product: true,
           },
         },
+        inventoryChange: true,
       },
     });
-    return handleSuccess({ data: updatedPurchaseOrder });
+    return handleSuccess({ data: updatedPurchaseOrderItem });
   } catch (e) {
     return handlePrismaClientError(e);
   }

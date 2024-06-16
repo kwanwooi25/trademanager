@@ -10,6 +10,7 @@ import { Form, InputFormField } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
 import { API_ROUTE, PATHS } from '@/const/paths';
 import { useAlert } from '@/context/Alert';
+import { useSelectOptions } from '@/context/SelectOptions';
 import { useAxiosError } from '@/hooks/useAxiosError';
 import { useCallbackUrl } from '@/hooks/useCallbackUrl';
 import { SuccessResponse } from '@/types/api';
@@ -30,6 +31,7 @@ export default function ProductFormPage({ product }: Props) {
   const { toast } = useToast();
   const { handleAxiosError } = useAxiosError();
   const { openAlert } = useAlert();
+  const { productOptions } = useSelectOptions();
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<ProductFormSchema>({
     resolver: zodResolver(formSchema),
@@ -53,6 +55,8 @@ export default function ProductFormPage({ product }: Props) {
           'Content-Type': 'multipart/form-data',
         },
       });
+
+      productOptions.refetch();
 
       if (isEditing) {
         toast({

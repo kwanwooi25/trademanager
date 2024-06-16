@@ -8,7 +8,6 @@ export async function getPurchaseOrders({
   page = 1,
   per = DEFAULT_PER,
   search = '',
-  status = 'ALL',
 }: GetPurchaseOrdersFilter & {
   page?: number;
   per?: number;
@@ -27,27 +26,33 @@ export async function getPurchaseOrders({
     companyId,
     AND: [
       {
-        OR: [
-          { productOption: { name: { contains: search } } },
-          { productOption: { product: { name: { contains: search } } } },
-        ],
-      },
-      {
-        status: {
-          in: status === 'ALL' ? ['ORDERED', 'RECEIVED'] : [status],
+        items: {
+          some: {
+            OR: [
+              { productOption: { product: { name: { contains: search } } } },
+              { productOption: { name: { contains: search } } },
+            ],
+          },
         },
       },
     ],
   };
 
-  const [count, purchaseOrders] = await Promise.all([
+  const [count, purchaseOrders] = await prisma.$transaction([
     prisma.purchaseOrder.count({ where }),
     prisma.purchaseOrder.findMany({
       where,
       skip: (page - 1) * per,
       take: per,
-      orderBy: { orderedAt: 'asc' },
-      include: { productOption: { include: { product: true } } },
+      orderBy: { orderedAt: 'desc' },
+      include: {
+        items: {
+          include: {
+            productOption: { include: { product: true } },
+            inventoryChange: true,
+          },
+        },
+      },
     }),
   ]);
 

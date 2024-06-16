@@ -139,13 +139,14 @@ model PurchaseOrderItem {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  companyId       String
-  company         Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  productOptionId String
-  productOption   ProductOption     @relation(fields: [productOptionId], references: [id], onDelete: Cascade)
-  purchaseOrderId String
-  purchaseOrder   PurchaseOrder     @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
-  inventoryChange InventoryChange[]
+  companyId         String
+  company           Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  productOptionId   String
+  productOption     ProductOption   @relation(fields: [productOptionId], references: [id], onDelete: Cascade)
+  purchaseOrderId   String
+  purchaseOrder     PurchaseOrder   @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  inventoryChangeId String          @unique
+  inventoryChange   InventoryChange @relation(fields: [inventoryChangeId], references: [id], onDelete: Cascade)
 }
 
 model Sale {
@@ -187,7 +188,7 @@ model InventoryChange {
   companyId       String
   company         Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
   purchaseId      String?
-  purchase        PurchaseOrderItem? @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  purchase        PurchaseOrderItem?
   saleId          String?
   sale            Sale?
 }

@@ -16,7 +16,9 @@ import SalesChannelSelectItem from './SelectItem';
 
 export default function SalesChannelSelect({ value, onChange }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const { salesChannels } = useSelectOptions();
+  const {
+    salesChannels: { value: salesChannels },
+  } = useSelectOptions();
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>

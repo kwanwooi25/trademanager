@@ -10,8 +10,7 @@ export function usePurchaseOrderListFilter() {
   const page = +(searchParams.get('page') ?? 1);
   const per = +(searchParams.get('per') ?? DEFAULT_PER);
   const search = searchParams.get('search') ?? '';
-  const status = (searchParams.get('status') ?? 'ALL') as GetPurchaseOrdersFilter['status'];
-  const filter = { page, per, search, status } satisfies GetPurchaseOrdersFilter & {
+  const filter = { page, per, search } satisfies GetPurchaseOrdersFilter & {
     page: number;
     per: number;
   };

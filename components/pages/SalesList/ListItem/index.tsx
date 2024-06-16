@@ -2,9 +2,7 @@
 
 import ProductImage from '@/components/ProductImage';
 import { createLabel } from '@/components/ProductOptionSelect/utils';
-import SaleFormDialog from '@/components/forms/SaleFormDialog';
 import { Button } from '@/components/ui/button';
-import { DialogTrigger } from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +12,7 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import { API_ROUTE } from '@/const/paths';
 import { useAlert } from '@/context/Alert';
+import { useFormDialog } from '@/context/FormDialog';
 import { useAxiosError } from '@/hooks/useAxiosError';
 import { SaleWithProductOptionAndChannel } from '@/types/sale';
 import axios from 'axios';
@@ -26,8 +25,18 @@ export default function SalesListItem({ sale }: Props) {
   const { openAlert } = useAlert();
   const { handleAxiosError } = useAxiosError();
   const { toast } = useToast();
+  const { openForm } = useFormDialog();
 
   const { id, soldAt, productOption, quantity, channel } = sale;
+
+  const handleClickEdit = () => {
+    openForm({
+      type: 'SALE',
+      formProps: {
+        sales: [sale],
+      },
+    });
+  };
 
   const handleClickDelete = () => {
     openAlert({
@@ -64,28 +73,24 @@ export default function SalesListItem({ sale }: Props) {
       <span className="text-center">{quantity.toLocaleString()}</span>
       <span className="text-center">{channel.name}</span>
 
-      <SaleFormDialog sales={[sale]} customTrigger>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className="ml-auto" size="icon" variant="ghost">
-              <MoreVertical />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DialogTrigger asChild>
-              <DropdownMenuItem>
-                <Edit2 className="mr-2 h-4 w-4" />
-                <span>수정</span>
-              </DropdownMenuItem>
-            </DialogTrigger>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button className="ml-auto" size="icon" variant="ghost">
+            <MoreVertical />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={handleClickEdit}>
+            <Edit2 className="mr-2 h-4 w-4" />
+            <span>수정</span>
+          </DropdownMenuItem>
 
-            <DropdownMenuItem onClick={handleClickDelete} className="text-destructive">
-              <Trash2 className="mr-2 h-4 w-4" />
-              <span>삭제</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SaleFormDialog>
+          <DropdownMenuItem onClick={handleClickDelete} className="text-destructive">
+            <Trash2 className="mr-2 h-4 w-4" />
+            <span>삭제</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </li>
   );
 }

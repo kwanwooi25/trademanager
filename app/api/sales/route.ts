@@ -1,4 +1,4 @@
-import { SaleFormSchema } from '@/components/forms/SaleFormDialog/formSchema';
+import { SaleFormSchema } from '@/components/forms/SaleForm/formSchema';
 import { getUserFromSession, handlePrismaClientError, handleSuccess } from '@/lib/api';
 import { prisma } from '@/lib/prisma';
 import { InventoryChangeType } from '@prisma/client';

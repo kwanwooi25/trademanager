@@ -16,9 +16,9 @@ export function getDefaultFormValues(product?: ProductWithOptions | null): Produ
   return {
     code: code ?? undefined,
     ...rest,
-    options: options.map(({ imageUrl, location, ...option }) => ({
+    options: options.map(({ imageUrl, storageLocation, ...option }) => ({
       imageUrl: imageUrl ?? undefined,
-      location: location ?? undefined,
+      storageLocation: storageLocation ?? undefined,
       ...option,
     })),
     optionIdsToDelete: [],

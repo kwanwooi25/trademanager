@@ -1,6 +1,7 @@
 'use client';
 
 import { AlertProvider } from '@/context/Alert';
+import { FormDialogProvider } from '@/context/FormDialog';
 import { SelectOptionsProvider } from '@/context/SelectOptions';
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
@@ -12,7 +13,9 @@ export default function Providers({ session, children }: Props) {
     <SessionProvider session={session}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
         <SelectOptionsProvider>
-          <AlertProvider>{children}</AlertProvider>
+          <FormDialogProvider>
+            <AlertProvider>{children}</AlertProvider>
+          </FormDialogProvider>
         </SelectOptionsProvider>
       </ThemeProvider>
     </SessionProvider>

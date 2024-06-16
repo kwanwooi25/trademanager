@@ -1,6 +1,4 @@
-import SalesChannelFormDialog from '@/components/forms/SalesChannelFormDialog';
 import { Button } from '@/components/ui/button';
-import { DialogTrigger } from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +8,8 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import { API_ROUTE } from '@/const/paths';
 import { useAlert } from '@/context/Alert';
+import { useFormDialog } from '@/context/FormDialog';
+import { useSelectOptions } from '@/context/SelectOptions';
 import { useAxiosError } from '@/hooks/useAxiosError';
 import { SalesChannel } from '@prisma/client';
 import axios from 'axios';
@@ -22,8 +22,19 @@ export default function SalesChannelListItem({ salesChannel }: Props) {
   const { openAlert } = useAlert();
   const { handleAxiosError } = useAxiosError();
   const { toast } = useToast();
+  const { openForm } = useFormDialog();
+  const { salesChannels } = useSelectOptions();
 
   const { id, name, url } = salesChannel;
+
+  const handleClickEdit = () => {
+    openForm({
+      type: 'SALES_CHANNEL',
+      formProps: {
+        salesChannel,
+      },
+    });
+  };
 
   const handleClickDelete = () => {
     openAlert({
@@ -48,6 +59,7 @@ export default function SalesChannelListItem({ salesChannel }: Props) {
             ),
             variant: 'success',
           });
+          salesChannels.refetch();
           router.refresh();
           return true;
         } catch (e) {
@@ -69,28 +81,24 @@ export default function SalesChannelListItem({ salesChannel }: Props) {
         )}
       </span>
 
-      <SalesChannelFormDialog salesChannel={salesChannel} customTrigger>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className="ml-auto" size="icon" variant="ghost">
-              <MoreVertical />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DialogTrigger asChild>
-              <DropdownMenuItem>
-                <Edit2 className="mr-2 h-4 w-4" />
-                <span>수정</span>
-              </DropdownMenuItem>
-            </DialogTrigger>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button className="ml-auto" size="icon" variant="ghost">
+            <MoreVertical />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={handleClickEdit}>
+            <Edit2 className="mr-2 h-4 w-4" />
+            <span>수정</span>
+          </DropdownMenuItem>
 
-            <DropdownMenuItem onClick={handleClickDelete} className="text-destructive">
-              <Trash2 className="mr-2 h-4 w-4" />
-              <span>삭제</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SalesChannelFormDialog>
+          <DropdownMenuItem onClick={handleClickDelete} className="text-destructive">
+            <Trash2 className="mr-2 h-4 w-4" />
+            <span>삭제</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </li>
   );
 }

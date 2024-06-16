@@ -20,6 +20,7 @@ export const API_ROUTE = {
   PRODUCT: '/api/product',
   PRODUCT_OPTION: '/api/product/option',
   PURCHASE_ORDER: '/api/purchase-order',
+  PURCHASE_ORDER_ITEM: '/api/purchase-order-item',
   SALES: '/api/sales',
   SALES_CHANNEL: '/api/sales-channel',
 } as const;
