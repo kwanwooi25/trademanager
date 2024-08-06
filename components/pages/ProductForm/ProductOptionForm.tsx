@@ -2,7 +2,14 @@ import ProductOptionImageForm from '@/components/pages/ProductForm/ProductOption
 import { COUNTRY_SELECT_OPTIONS } from '@/components/pages/ProductForm/const';
 import type { ProductFormSchema } from '@/components/pages/ProductForm/formSchema';
 import { Button } from '@/components/ui/button';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  InputFormField,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -53,19 +60,17 @@ export default function ProductOptionForm({ index, option, onUpdate, onRemove }:
           onRemove={handleImageRemove}
         />
       </div>
-      <div className={'grid grid-cols-[2fr_1fr_2fr] gap-2'}>
-        <FormField
+      <div className={'grid grid-cols-[1fr_1fr] gap-y-2 gap-x-4'}>
+        <InputFormField
           control={form.control}
           name={`options.${index}.name`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>옵션명</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="옵션명"
+          required
+        />
+        <InputFormField
+          control={form.control}
+          name={`options.${index}.code`}
+          label="상품옵션코드"
         />
         <FormField
           control={form.control}

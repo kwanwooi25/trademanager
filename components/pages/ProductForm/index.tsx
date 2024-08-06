@@ -3,10 +3,28 @@
 import PageBody from '@/components/PageBody';
 import PageHeader from '@/components/PageHeader';
 import ProductOptionForm from '@/components/pages/ProductForm/ProductOptionForm';
-import { DEFAULT_PRODUCT_OPTION } from '@/components/pages/ProductForm/const';
+import {
+  DEFAULT_PRODUCT_OPTION,
+  PRODUCT_STATUS_OPTIONS,
+} from '@/components/pages/ProductForm/const';
 import { formSchema, type ProductFormSchema } from '@/components/pages/ProductForm/formSchema';
 import { Button } from '@/components/ui/button';
-import { Form, InputFormField } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  InputFormField,
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import { API_ROUTE, PATHS } from '@/const/paths';
 import { useAlert } from '@/context/Alert';
@@ -125,20 +143,51 @@ export default function ProductFormPage({ product }: Props) {
           </Button>
         </PageHeader>
         <PageBody className="flex flex-col gap-4">
-          <div className="grid grid-cols-[2fr_1fr] gap-4">
-            <InputFormField
-              control={form.control}
-              name="name"
-              label="상품명"
-              inputProps={{ autoFocus: true }}
-            />
-            <InputFormField control={form.control} name="code" label="상품코드" />
-          </div>
+          <InputFormField
+            control={form.control}
+            name="name"
+            label="상품명"
+            inputProps={{ autoFocus: true }}
+            required
+          />
           <InputFormField
             control={form.control}
             name="purchaseAt"
             label="구매처"
             inputProps={{ placeholder: 'URL 또는 명칭' }}
+            required
+          />
+          <InputFormField control={form.control} name="nameForSale" label="판매용상품명" />
+          <InputFormField
+            control={form.control}
+            name="searchTerms"
+            label="검색어"
+            inputProps={{ placeholder: '콤마(,)로 구분하여 입력' }}
+          />
+          <InputFormField control={form.control} name="detailPageUrl" label="상세페이지URL" />
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>상품 상태</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder={'상품 상태 선택'} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {PRODUCT_STATUS_OPTIONS.map(({ value, label }) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
           />
 
           <div className={'pl-8 flex flex-col gap-4'}>
