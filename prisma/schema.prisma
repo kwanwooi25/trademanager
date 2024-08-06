@@ -88,12 +88,15 @@ model Company {
 }
 
 model Product {
-  id         String   @id @default(cuid())
-  code       String?
-  name       String
-  purchaseAt String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id            String        @id @default(cuid())
+  name          String
+  purchaseAt    String
+  detailPageUrl String?
+  searchTerms   String?
+  nameForSale   String?
+  status        ProductStatus @default(NONE)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
   companyId String
   company   Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
@@ -102,6 +105,7 @@ model Product {
 
 model ProductOption {
   id              String              @id @default(cuid())
+  code            String?
   name            String
   imageUrl        String?
   importedFrom    Country             @default(CN)
@@ -197,6 +201,14 @@ enum InventoryChangeType {
   STORAGE
   SALE
   STOCKTAKING
+}
+
+enum ProductStatus {
+  NONE
+  IMAGES_READY
+  DETAIL_PAGE_READY
+  ON_SALE
+  SUSPENDED
 }
 
 enum ProductOptionStatus {
