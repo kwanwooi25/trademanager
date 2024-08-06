@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { ProductOptionWithProduct } from '@/types/productOption';
-import Image from 'next/image';
+import ProductImage from '../ProductImage';
 import { createLabel } from './utils';
 
 export default function ProductOptionSelectItem({ productOption, isSelected }: Props) {
@@ -8,13 +8,7 @@ export default function ProductOptionSelectItem({ productOption, isSelected }: P
 
   return (
     <div className={cn('flex items-center gap-2 overflow-hidden')}>
-      <Image
-        className="rounded-md"
-        src={productOption.imageUrl ?? ''}
-        alt={createLabel(productOption)}
-        width={32}
-        height={32}
-      />
+      <ProductImage className="rounded-md" imageUrl={productOption.imageUrl} size={32} />
       <span className={cn('text-ellipsis', isSelected && 'font-bold')}>
         {createLabel(productOption)}
       </span>

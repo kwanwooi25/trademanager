@@ -14,7 +14,10 @@ export async function DELETE(req: NextRequest, { params: { id } }: { params: { i
   }
 
   try {
-    await prisma.purchaseOrder.delete({ where: { id } });
+    await Promise.all([
+      prisma.purchaseOrder.delete({ where: { id } }),
+      prisma.inventoryChange.deleteMany({ where: { purchaseId: id } }),
+    ]);
     return handleSuccess({ data: null, status: HttpStatusCode.Ok });
   } catch (e) {
     return handlePrismaClientError(e);

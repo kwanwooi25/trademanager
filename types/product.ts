@@ -1,7 +1,9 @@
 import { Product } from '@prisma/client';
-import { ProductOptionWithInventoryChangesAndSales } from './productOption';
+import { ProductOptionWithInventoryChangesAndSalesAndPurchases } from './productOption';
 
-export type ProductWithOptions = Product & { options: ProductOptionWithInventoryChangesAndSales[] };
+export type ProductWithOptions = Product & {
+  options: ProductOptionWithInventoryChangesAndSalesAndPurchases[];
+};
 
 export type GetProductsFilter = {
   search?: string;

@@ -63,11 +63,11 @@ export default function SalesListItem({ sale }: Props) {
   return (
     <li className="px-4 py-2 grid items-center gap-4 grid-cols-[1fr_60px_4fr_1fr_1fr_40px] border-b p-2">
       <span className="text-center">{format(soldAt, 'yyyy-MM-dd')}</span>
-      <ProductImage imageUrl={productOption.imageUrl ?? ''} size={60} />
+      <ProductImage imageUrl={productOption.imageUrl} size={60} />
       <div className="flex flex-col items-start">
-        {/* {productOption.product.code && (
-          <span className="font-bold text-sm opacity-50">{productOption.product.code}</span>
-        )} */}
+        {productOption.code && (
+          <span className="font-bold text-sm opacity-50">{productOption.code}</span>
+        )}
         <span className="line-clamp-1">{createLabel(productOption)}</span>
       </div>
       <span className="text-center">{quantity.toLocaleString()}</span>

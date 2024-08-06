@@ -10,6 +10,14 @@ export async function getProductById(id: string) {
 
   return await prisma.product.findUnique({
     where: { companyId, id },
-    include: { options: { include: { inventoryChanges: true, sales: true } } },
+    include: {
+      options: {
+        include: {
+          inventoryChanges: true,
+          sales: true,
+          purchases: { include: { purchaseOrder: true } },
+        },
+      },
+    },
   });
 }

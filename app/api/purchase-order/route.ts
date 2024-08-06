@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
           await tx.inventoryChange.update({
             where: { id: inventoryChange.id },
             data: {
-              purchaseId: createdPurchaseOrderItem.id,
+              purchaseId: createdPurchaseOrder.id,
             },
           });
           return createdPurchaseOrderItem;
