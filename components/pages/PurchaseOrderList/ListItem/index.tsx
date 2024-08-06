@@ -145,9 +145,9 @@ export default function PurchaseOrderListItem({ purchaseOrder }: Props) {
             <span></span>
             <ProductImage imageUrl={productOption.imageUrl ?? ''} size={60} />
             <div className="flex flex-col items-start">
-              {productOption.product.code && (
+              {/* {productOption.product.code && (
                 <span className="font-bold text-sm opacity-50">{productOption.product.code}</span>
-              )}
+              )} */}
               <span className="line-clamp-1">{label}</span>
             </div>
             <span className="text-center">{orderedQuantity.toLocaleString()}</span>

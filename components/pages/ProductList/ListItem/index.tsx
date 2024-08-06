@@ -106,14 +106,14 @@ export default function ProductListItem({ product }: Props) {
                 className="self-start text-base font-bold"
                 style={{ gridRow: `span ${options.length}` }}
               >
-                {product.code && (
-                  <span className="font-bold text-sm opacity-50">{product.code}</span>
-                )}
                 <span className="line-clamp-1">{product.name}</span>
               </div>
             )}
             <ProductImage imageUrl={imageUrl} size={60} />
-            <span className="text-base font-bold">{name}</span>
+            <span className="text-base font-bold">
+              {option.code && <span className="font-bold text-sm opacity-50">{option.code}</span>}
+              <span className="line-clamp-1">{name}</span>
+            </span>
             <span className="text-right">-</span>
             <span className="text-right">
               {inventoryQuantity ? inventoryQuantity.toLocaleString() : '-'}

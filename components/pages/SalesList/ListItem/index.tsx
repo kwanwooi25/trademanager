@@ -65,9 +65,9 @@ export default function SalesListItem({ sale }: Props) {
       <span className="text-center">{format(soldAt, 'yyyy-MM-dd')}</span>
       <ProductImage imageUrl={productOption.imageUrl ?? ''} size={60} />
       <div className="flex flex-col items-start">
-        {productOption.product.code && (
+        {/* {productOption.product.code && (
           <span className="font-bold text-sm opacity-50">{productOption.product.code}</span>
-        )}
+        )} */}
         <span className="line-clamp-1">{createLabel(productOption)}</span>
       </div>
       <span className="text-center">{quantity.toLocaleString()}</span>
